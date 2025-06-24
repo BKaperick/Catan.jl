@@ -35,8 +35,7 @@ function run(config_file::String, file_suffix)
     configs = Catan.parse_configs(config_file)
     configs["PlayerSettings"]["FEATURES"] = replace(configs["PlayerSettings"]["FEATURES"], ".csv" => "_$file_suffix.csv")
     configs["PlayerSettings"]["PUBLIC_FEATURES"] = replace(configs["PlayerSettings"]["PUBLIC_FEATURES"], ".csv" => "_$file_suffix.csv")
-    player_schemas = Catan.read_player_constructors_from_config(configs["PlayerSettings"])
-    CatanLearning.run(player_schemas, configs)
+    CatanLearning.run_tournament(configs)
 end
 
 function run_tournament(config_file::String)
@@ -85,7 +84,7 @@ function profile_simple_run(config_file)
 
     # Setup and run first turn before profiling starts
     configs = Catan.parse_configs(config_file)
-    players = Catan.read_players_from_config(configs)
+    players = Catan.create_players(configs)
     game = Game(players, configs)
     board = GameRunner.initialize_game!(game)
     GameRunner.do_first_turn(game, board, game.players)
