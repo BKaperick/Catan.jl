@@ -21,7 +21,7 @@ function create_players(configs::Dict)::Vector{PlayerType}
         push!(players, player)
     end
     return players
-endS
+end
 
 function read_channels_from_config(configs::Dict)::Dict{Symbol, Channel}
     channels = Dict{Symbol, Channel}()
