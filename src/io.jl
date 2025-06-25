@@ -2,23 +2,12 @@ function get_parsed_map_lines(map_str)
     [strip(line) for line in split(map_str,'\n') if !isempty(strip(line)) && strip(line)[1] != '#']
 end
 
+"""
+    create_players(configs::Dict)::Vector{PlayerType}
 
-function read_player_constructors_from_config(player_configs::Dict)::Vector{Tuple{String, Symbol}}
-    players = []
-    for (name,configs) in collect(player_configs)
-        if ~(configs isa Dict)
-            continue
-        end
-        @debug "$name -> $configs"
-        playertype = configs["TYPE"]
-        name_sym = Symbol(name)
-        @debug "Added player $name_sym of type $playertype"
-        player = (playertype, name_sym)
-        push!(players, player)
-    end
-    return players
-end
-function read_players_from_config(configs::Dict)::Vector{PlayerType}
+Creates the vector of players that can be passed to `Game` constructor.
+"""
+function create_players(configs::Dict)::Vector{PlayerType}
     @debug "starting to read lines"
     players = []
     for (name,config) in collect(configs["PlayerSettings"])
@@ -33,7 +22,6 @@ function read_players_from_config(configs::Dict)::Vector{PlayerType}
     end
     return players
 end
-
 
 function read_channels_from_config(configs::Dict)::Dict{Symbol, Channel}
     channels = Dict{Symbol, Channel}()

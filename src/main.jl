@@ -54,7 +54,7 @@ Run one game, returning the board and the winner, accepting a config TOML file t
 overwrite any default configuration keys set in ./DefaultConfiguration.toml.
 """
 function run(configs::Dict)
-    players = read_players_from_config(configs)
+    players = create_players(configs)
     return run(players, configs)
 end
 
@@ -69,7 +69,7 @@ function run(game::Game)
 end
 
 function run_async(configs::Dict)
-    players = read_players_from_config(configs)
+    players = create_players(configs)
     channels = read_channels_from_config(configs)
     return _run_async(channels, players, configs)
 end

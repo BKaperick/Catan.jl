@@ -20,10 +20,12 @@ TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [compat]
+Crayons = "4"
 DocStringExtensions = "0.9"
 JET = "0.9.19"
 Revise = "3.7.5"
 StaticArrays = "1.9.13"
+TOML = "1"
 Test = "1.11.0"
 TestItemRunner = "1.1.0"
 TestItems = "1.0.0"

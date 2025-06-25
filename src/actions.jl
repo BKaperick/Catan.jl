@@ -131,16 +131,16 @@ end
 
 function do_robber_move(board, players::AbstractVector{PlayerType}, player)
     for p in players
-        do_robber_move_discard(board, p)
+        do_robber_move_discard(board, players, p)
     end
     do_robber_move_theft(board, players, player)
 end
 
-function do_robber_move_discard(board, player::PlayerType)
+function do_robber_move_discard(board, players::AbstractVector{PlayerType}, player::PlayerType)
     r_count = PlayerApi.count_cards(player.player)
     if r_count > 7
         for i = 1:Int(floor(r_count / 2))
-            resource = choose_one_resource_to_discard(board, player)
+            resource = choose_one_resource_to_discard(board, PlayerPublicView.(players), player)
             PlayerApi.discard_cards!(player.player, resource)
             BoardApi.give_resource!(board, resource)
         end
@@ -194,8 +194,8 @@ function get_admissible_theft_victims(board::Board, players::AbstractVector{Play
     admissible_victims = []
     for c in [cc for cc in TILE_TO_COORDS[new_tile] if haskey(board.coord_to_building, cc)]
         team = board.coord_to_building[c].team
-        @debug team
         victim = [p for p in players if p.team == team][1]
+
         if PlayerApi.has_any_resources(victim) && (team != thief.team)
             push!(admissible_victims, victim)
         end
