@@ -1,4 +1,4 @@
-# CatanEngine.jl 
+# Catan.jl 
 
 [![][docs-img]][docs-url] [![][license-img]][license-url] [![][ci-img]][ci-url]
 

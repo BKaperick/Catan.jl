@@ -41,11 +41,11 @@ function choose_building_location(board::Board, players::AbstractVector{PlayerPu
 end
 
 """
-    choose_one_resource_to_discard(board::Board, player::RobotPlayer)::Symbol
+    choose_one_resource_to_discard(board::Board, players::AbstractVector{PlayerPublicView}, player::RobotPlayer)::Symbol
 
 Returned symbol must be present in both `Catan.RESOURCES` and `keys(player.resources)`. 
 """
-function choose_one_resource_to_discard(board::Board, player::RobotPlayer)::Symbol
+function choose_one_resource_to_discard(board::Board, players::AbstractVector{PlayerPublicView}, player::RobotPlayer)::Symbol
     isempty(player.player.resources) && throw(ArgumentError("Player has no resources"))
     return unsafe_random_sample_one_resource(player.player.resources)
     #return random_sample_resources(player.player.resources, 1)[1]
