@@ -13,7 +13,13 @@ mutable struct Game
 end
 
 Game(players) = Game(SVector{length(players)}(players), Dict{String, Any}())
-Game(players::AbstractVector, configs::Dict) = Game(get_devcard_counts(configs), SVector{length(players)}(deepcopy.(players)), Set(), 1, false, false, false, rand(range(1,10000)), configs)
+function Game(players::AbstractVector, configs::Dict)
+    # TODO, fails with ERROR: Tuple field type cannot be Union{} in broadcast, so we have to do it as list comp.
+    # Seems weird, maybe was working before 1.10
+    static_copied_players = SVector{length(players)}([deepcopy(p) for p in players])
+    #bad_static_copied_players = SVector{length(players)}(deepcopy.(players))
+    Game(get_devcard_counts(configs), static_copied_players, Set(), 1, false, false, false, rand(range(1,10000)), configs)
+end
 
 struct Road
     coord1::Tuple{Int8,Int8}

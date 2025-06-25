@@ -111,7 +111,7 @@ function test_player_implementation(T::Type, configs) #where {T <: PlayerType}
     BoardApi.build_settlement!(board, player.player.team, coord)
     road_candidates = BoardApi.get_admissible_road_locations(board, player.player.team, true)
     choose_building_location(board, players, player, [coord], :City)
-    choose_one_resource_to_discard(board, player)
+    choose_one_resource_to_discard(board, players, player)
     choose_monopoly_resource(board, players, player)
     choose_next_action(board, players, player, actions)
     choose_place_robber(board, players, player, BoardApi.get_admissible_robber_tiles(board))
