@@ -155,6 +155,7 @@ function do_action_from_legal_actions(game, board, player, legal_actions::Set{Pr
     end
     next_action = choose_next_action(board, PlayerPublicView.(game.players), player, legal_actions)::ChosenAction
     if next_action.name == :DoNothing
+        do_post_action_step(board, player)
         return false
     end
     next_action_func! = ACTIONS_DICTIONARY[next_action.name]::Function
