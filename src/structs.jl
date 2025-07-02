@@ -70,7 +70,7 @@ function Base.copy(board::Board)
                  copy(board.dicevalue_to_tiles),
                  copy(board.tile_to_resource),
                  copy(board.coord_to_building),
-                 copy(board.coord_to_roads),
+                 deepcopy(board.coord_to_roads),
                  copy(board.coord_to_road_teams),
                  copy(board.coord_to_port),
                  copy(board.buildings),
