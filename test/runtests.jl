@@ -127,6 +127,38 @@ end
     @test haskey(board_copy.coord_to_building, loc)
 end
 
+@testitem "copy_roads" setup=[global_test_setup] begin
+    board = read_map(configs)
+    player1 = DefaultRobotPlayer(:Test1, configs)
+    loc = BoardApi.get_admissible_settlement_locations(board, player1.player.team, true)[1]
+    BoardApi.build_settlement!(board, :Test1, loc)
+
+    board_copy = copy(board)
+    loc = BoardApi.get_admissible_road_locations(board_copy, :Test1, true)[1]
+    BoardApi.build_road!(board_copy, :Test1, loc[1], loc[2])
+
+    @test !haskey(board.coord_to_roads, loc[1])
+    @test haskey(board_copy.coord_to_roads, loc[1])
+
+    @test !haskey(board.coord_to_roads, loc[2])
+    @test haskey(board_copy.coord_to_roads, loc[2])
+    @test length(board.coord_to_roads) == 0
+    @test length(board_copy.coord_to_roads) == 2
+    @test BoardApi._calculate_max_road_length(board, :Test1) == 0
+    @test BoardApi._calculate_max_road_length(board_copy, :Test1) == 1
+
+    #=
+    @test board.spaces[loc[1]][loc[2]] == false
+    @test board_copy.spaces[loc[1]][loc[2]] == true
+
+    @test length(board.buildings) == 0
+    @test length(board_copy.buildings) == 1
+    
+    @test !haskey(board.coord_to_building, loc)
+    @test haskey(board_copy.coord_to_building, loc)
+    =#
+end
+
 @testitem "set_starting_player" setup=[global_test_setup] tags=[:skipactions] begin
     sf, sfio = reset_savefile_with_timestamp("test_set_starting_player", configs)
     reset_savefile!(configs, sf, sfio)
