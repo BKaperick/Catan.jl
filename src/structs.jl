@@ -16,8 +16,9 @@ Game(players) = Game(SVector{length(players)}(players), Dict{String, Any}())
 function Game(players::AbstractVector, configs::Dict)
     # TODO, fails with ERROR: Tuple field type cannot be Union{} in broadcast, so we have to do it as list comp.
     # Seems weird, maybe was working before 1.10
-    static_copied_players = SVector{length(players)}([deepcopy(p) for p in players])
-    #bad_static_copied_players = SVector{length(players)}(deepcopy.(players))
+    # TODO test now that deepcopy changed to copy
+    static_copied_players = SVector{length(players)}([copy(p) for p in players])
+    #bad_static_copied_players = SVector{length(players)}(copy.(players))
     Game(get_devcard_counts(configs), static_copied_players, Set(), 1, false, false, false, rand(range(1,10000)), configs)
 end
 
@@ -63,22 +64,22 @@ Board(tile_to_value::Dict, dicevalue_to_tiles::Dict, tile_to_resource::Dict,
       nothing, nothing, configs)
 Board(csvfile) = BoardApi.Board(csvfile)
 
-function Base.deepcopy(board::Board)
+function Base.copy(board::Board)
     return Board(
-                 deepcopy(board.tile_to_dicevalue),
-                 deepcopy(board.dicevalue_to_tiles),
-                 deepcopy(board.tile_to_resource),
-                 deepcopy(board.coord_to_building),
-                 deepcopy(board.coord_to_roads),
-                 deepcopy(board.coord_to_road_teams),
-                 deepcopy(board.coord_to_port),
-                 deepcopy(board.buildings),
-                 deepcopy(board.roads),
-                 deepcopy(board.team_to_road_length),
+                 copy(board.tile_to_dicevalue),
+                 copy(board.dicevalue_to_tiles),
+                 copy(board.tile_to_resource),
+                 copy(board.coord_to_building),
+                 copy(board.coord_to_roads),
+                 copy(board.coord_to_road_teams),
+                 copy(board.coord_to_port),
+                 copy(board.buildings),
+                 copy(board.roads),
+                 copy(board.team_to_road_length),
                  board.robber_tile,
-                 deepcopy(board.spaces),
-                 deepcopy(board.resources),
-                 deepcopy(board.longest_road),
+                 [copy(s) for s in board.spaces],
+                 copy(board.resources),
+                 board.longest_road,
                  board.largest_army,
                  board.configs
                     )

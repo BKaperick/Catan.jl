@@ -1,5 +1,5 @@
 using Random
-import Base: deepcopy
+import Base: copy
 
 abstract type PlayerType end
 mutable struct Player
@@ -79,17 +79,17 @@ HumanPlayer(team::Symbol, configs::Dict) = HumanPlayer(team, stdin, configs)
 DefaultRobotPlayer(team::Symbol, configs::Dict) = DefaultRobotPlayer(Player(team, configs))
 
 
-function Base.deepcopy(player::DefaultRobotPlayer)
-    return DefaultRobotPlayer(deepcopy(player.player))
+function Base.copy(player::DefaultRobotPlayer)
+    return DefaultRobotPlayer(copy(player.player))
 end
 
-function Base.deepcopy(player::Player)
+function Base.copy(player::Player)
     return Player(
-        deepcopy(player.resources),
-        deepcopy(player.devcards),
+        copy(player.resources),
+        copy(player.devcards),
         player.team,
-        deepcopy(player.devcards_used),
-        deepcopy(player.ports),
+        copy(player.devcards_used),
+        copy(player.ports),
         player.played_devcard_this_turn,
         player.bought_devcard_this_turn,
         player.configs

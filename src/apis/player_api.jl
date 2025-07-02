@@ -47,7 +47,7 @@ function get_admissible_devcards_with_counts(player::Player)::Dict{Symbol, Int8}
     end
     
     # Non-playable card :VictoryPoint
-    out = deepcopy(player.devcards)
+    out = copy(player.devcards)
     out[:VictoryPoint] = 0
 
     if player.bought_devcard_this_turn !== nothing

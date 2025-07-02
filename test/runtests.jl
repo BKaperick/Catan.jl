@@ -73,7 +73,7 @@ function doset(ti)
         return true
     end
     for a in ARGS
-        if occursin(lowercase(a), lowercase(descr))
+        if occursin(lowercase(a), lowercase(ti.name))
             return true
         end
     end
@@ -103,12 +103,28 @@ end
             ]
 
     players = setup_players(team_and_playertype, configs["PlayerSettings"])
-    game = Game(players, configs)
-    game2 = deepcopy(game)
-    game.players[1].player.team = :newcolor
-    @test game2.players[1].player.team == :blue
-    game.players[1].player.resources[:Wood] = 50
-    @test !haskey(game2.players[1].player.resources, :Wood) || game2.players[1].player.resources[:Wood] == 0
+    players_copy = [copy(p) for p in players]
+    players[1].player.team = :newcolor
+    @test players_copy[1].player.team == :blue
+    players[1].player.resources[:Wood] = 50
+    @test !haskey(players_copy[1].player.resources, :Wood) || players_copy[1].player.resources[:Wood] == 0
+end
+
+@testitem "copy_spaces" setup=[global_test_setup] begin
+    board = read_map(configs)
+    board_copy = copy(board)
+    player1 = DefaultRobotPlayer(:Test1, configs)
+    loc = BoardApi.get_admissible_settlement_locations(board, player1.player.team, true)[1]
+    BoardApi.build_settlement!(board_copy, :Test1, loc)
+
+    @test board.spaces[loc[1]][loc[2]] == false
+    @test board_copy.spaces[loc[1]][loc[2]] == true
+
+    @test length(board.buildings) == 0
+    @test length(board_copy.buildings) == 1
+    
+    @test !haskey(board.coord_to_building, loc)
+    @test haskey(board_copy.coord_to_building, loc)
 end
 
 @testitem "set_starting_player" setup=[global_test_setup] tags=[:skipactions] begin
@@ -443,7 +459,7 @@ end
     @test board.longest_road === :Green
 
     # Now Blue builds a settlement that splits the green road, so now noone has longest road
-    board2 = deepcopy(board)
+    board2 = copy(board)
     BoardApi.build_settlement!(board2, :Blue, (3,9))
     @test BoardApi._calculate_max_road_length(board2, :Green) == board2.team_to_road_length[:Green] == 4
     @test board2.longest_road === nothing
