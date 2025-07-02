@@ -757,11 +757,11 @@ end
 end
 
 function run_tests(neverend = false)
-    
+    ~ispath("data") && mkdir("data")
     io = open("_tmp_Configuration.toml", "w");
     write(io, """SAVE_GAME_TO_FILE = true
 SAVE_FILE = "data/savefile.txt"
-SAVE_MAP = "_temp_map_file.csv"
+SAVE_MAP = "data/_temp_map_file.csv"
 LOAD_MAP = "sample.csv"
 #LOG_OUTPUT = "./data/oneoff_test_log.txt"
 LOG_LEVEL = "Logging.Warn"

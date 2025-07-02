@@ -4,6 +4,7 @@ using Test
 
 function reset_savefile_with_timestamp(name, configs)
     configs["SAVE_GAME_TO_FILE"] = true
+    ~ispath("data") && mkdir("data")
     savefile = "data/_$(name)_$(Dates.format(now(), "yyyymmdd_HHMMSS"))_$counter.txt"
     configs["SAVE_FILE"] = savefile
     global counter += 1
