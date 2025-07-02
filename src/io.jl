@@ -10,7 +10,7 @@ Creates the vector of players that can be passed to `Game` constructor.
 function create_players(configs::Dict)::Vector{PlayerType}
     @debug "starting to read lines"
     players = []
-    for name in configs["PlayerSettings"]["PLAYERS"]
+    for name in configs["TEAMS"]
         config = configs["PlayerSettings"][name]
         if ~(config isa Dict)
             continue
