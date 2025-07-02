@@ -33,7 +33,7 @@ end
 Combines the public fields of `Player`, with some additional fields representing the info available
 publicly about the private fields.  E.g. everyone knows how many dev cards each player has, but not which ones.
 """
-mutable struct PlayerPublicView
+struct PlayerPublicView
     # This is the same as the public fields in `Player`
     team::Symbol
     devcards_used::Dict{Symbol,Int8}
