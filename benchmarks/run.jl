@@ -42,6 +42,12 @@ function run_tournament(config_file::String)
     configs = Catan.parse_configs(config_file)
     CatanLearning.run_tournament(configs)
 end
+
+function run_state_space_tournament(config_file::String)
+    configs = Catan.parse_configs(config_file)
+    CatanLearning.run_state_space_tournament(configs)
+end
+
 function run_tournament_async(config_file::String)
     configs = Catan.parse_configs(config_file)
     CatanLearning.run_tournament_async(configs)
