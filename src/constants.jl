@@ -61,8 +61,11 @@ function get_player_config(configs, key, team_sym = nothing)
     end
 end
 
-function parse_logging_configs!(user_configs::Dict)
-    log_level_str = user_configs["LOG_LEVEL"]
+function make_logger(log_level::String, logger_output::String)
+    make_logger(parse_log_level(log_level), logger_output)
+end
+
+function parse_log_level(log_level_str::String)
     if log_level_str == "Logging.Info" || log_level_str == "Info"
         log_level = Logging.Info
     elseif log_level_str == "Logging.Warn" || log_level_str == "Warn"
@@ -72,8 +75,10 @@ function parse_logging_configs!(user_configs::Dict)
     else
         log_level = Logging.Info
     end
+    return log_level
+end
 
-    logger_output = user_configs["LOG_OUTPUT"]
+function make_logger(log_level::LogLevel, logger_output::String)
     logger_io = stderr
     if logger_output == "stderr"
         logger_io = stderr
@@ -90,6 +95,14 @@ function parse_logging_configs!(user_configs::Dict)
         logger_io = open(logger_output, "w+")
         logger = SimpleLogger(logger_io, log_level)
     end
+    return (logger,log_level,logger_io)
+end
+
+function parse_logging_configs!(user_configs::Dict)
+    log_level_str = user_configs["LOG_LEVEL"]
+    logger_output = user_configs["LOG_OUTPUT"]
+    (logger,log_level,logger_io) = make_logger(log_level_str, logger_output)
+
     user_configs["LOG_LEVEL"] = log_level
     user_configs["LOGGER_IO"] = logger_io
     user_configs["LOGGER"] = logger

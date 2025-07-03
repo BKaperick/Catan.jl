@@ -34,8 +34,8 @@ ACTIONS_DICTIONARY = Dict(
 # CONSTRUCTION ACTIONS
 #
 
-function construct_road(board, player::Player, coord1, coord2, first_turn = false)
-    if ~first_turn
+function construct_road(board, player::Player, coord1::Tuple{TInt, TInt}, coord2::Tuple{TInt, TInt}, do_pay_cost = true) where {TInt <: Integer}
+    if do_pay_cost
         PlayerApi.pay_construction(player, :Road)
         BoardApi.pay_construction!(board, :Road)
     end
@@ -100,8 +100,8 @@ function do_devcard_action(board, players::AbstractVector{PlayerType}, player::P
 end
 
 function do_road_building_action(board, players::AbstractVector{PlayerPublicView}, player::PlayerType)
-    choose_validate_build_road!(board, players, player, false)
-    choose_validate_build_road!(board, players, player, false)
+    choose_validate_build_road!(board, players, player, false, true)
+    choose_validate_build_road!(board, players, player, false, true)
 end
 
 function do_year_of_plenty_action(board, players::AbstractVector{PlayerPublicView}, player::PlayerType)
@@ -216,6 +216,7 @@ function with_options(action::Function, candidates::Vector)
 end
 
 function get_legal_actions(game, board, player::Player)::Set{PreAction}
+    is_first_turn = game.turn_num == 1
     actions = Set{PreAction}([PreAction(:DoNothing)])
 
     admissible_cities = BoardApi.get_admissible_city_locations(board, player.team)
@@ -223,14 +224,16 @@ function get_legal_actions(game, board, player::Player)::Set{PreAction}
         push!(actions, PreAction(:ConstructCity, Vector{Tuple{Tuple{Int8,Int8}}}([(c,) for c in admissible_cities])))
     end
 
-    admissible_settlements = BoardApi.get_admissible_settlement_locations(board, player.team)
-    if PlayerApi.has_enough_resources(player, COSTS[:Settlement]) && length(admissible_settlements) > 0
-        push!(actions, PreAction(:ConstructSettlement, Vector{Tuple{Tuple{Int8,Int8}}}([(c,) for c in admissible_settlements])))
+    admissible_settlements = BoardApi.get_admissible_settlement_locations(board, player.team, is_first_turn)
+    resource_check = !is_first_turn && PlayerApi.has_enough_resources(player, COSTS[:Settlement])
+    if resource_check && length(admissible_settlements) > 0
+        push!(actions, PreAction(:ConstructSettlement, Vector{Tuple}([(c,is_first_turn) for c in admissible_settlements])))
     end
 
-    admissible_roads = BoardApi.get_admissible_road_locations(board, player.team)
-    if PlayerApi.has_enough_resources(player, COSTS[:Road]) && length(admissible_roads) > 0
-        push!(actions, PreAction(:ConstructRoad, admissible_roads))
+    admissible_roads = BoardApi.get_admissible_road_locations(board, player.team, is_first_turn)
+    resource_check = !is_first_turn && PlayerApi.has_enough_resources(player, COSTS[:Road])
+    if resource_check && length(admissible_roads) > 0
+        push!(actions, PreAction(:ConstructRoad, Vector{Tuple}([(r...,is_first_turn) for r in admissible_roads])))
     end
 
     if PlayerApi.has_enough_resources(player, COSTS[:DevelopmentCard]) && GameApi.can_draw_devcard(game)
@@ -246,8 +249,8 @@ function get_legal_actions(game, board, player::Player)::Set{PreAction}
 end
 
 action_construct_city(g::Game, b::Board, p::PlayerType, coord) = construct_city(b, p.player, coord)
-action_construct_settlement(g::Game, b::Board, p::PlayerType, coord) = construct_settlement(b, p.player, coord)
-action_construct_road(g::Game, b::Board, p::PlayerType, coord1, coord2) = construct_road(b, p.player, coord1, coord2)
+action_construct_settlement(g::Game, b::Board, p::PlayerType, coord, first_turn) = construct_settlement(b, p.player, coord, first_turn)
+action_construct_road(g::Game, b::Board, p::PlayerType, coord1, coord2, do_pay_cost) = construct_road(b, p.player, coord1, coord2, do_pay_cost)
 action_buy_devcard(g::Game, b::Board, p::PlayerType) = draw_devcard(g, b, p.player)
 action_play_devcard(g::Game, b::Board, p::PlayerType, card::Symbol) = do_play_devcard(b, g.players, p, card)
 action_propose_trade_goods(g::Game, b::Board, p::PlayerType, rand_resource_from::Vector{Symbol}, rand_resource_to::Vector{Symbol}) = propose_trade_goods(b, g.players, p, rand_resource_from, rand_resource_to)

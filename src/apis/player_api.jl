@@ -157,9 +157,11 @@ function discard_cards!(player, resources...)
     _discard_cards!(player, resources...)
 end
 function _discard_cards!(player, resources...)
+    ret = true
     for r in resources
-        _take_resource!(player, r)
+        ret &= _take_resource!(player, r)
     end
+    return ret
 end
 
 function count_cards(player::Player)
@@ -206,15 +208,26 @@ end
 function _take_resource!(player::Player, resource::Symbol)
     if haskey(player.resources, resource) && player.resources[resource] > 0
         player.resources[resource] -= 1
+        return true
     else
+        @debug player.resources
         @debug "$(player.team) has insufficient $(resource) cards"
+        return false
     end
 end
 
+"""
+    pay_price!(player::Player, cost::Dict)
+
+This should only be called when the player has sufficient funds.  Those checks
+should have already been done before, hence the aggressive `@assert` if the 
+payment fails due to lack of resources.
+"""
 function pay_price!(player::Player, cost::Dict)
     resources = keys(cost)
     for (r,amount) in cost
-        discard_cards!(player, repeat([r], amount)...)
+        b = discard_cards!(player, repeat([r], amount)...)
+        @assert b
     end
 end
 

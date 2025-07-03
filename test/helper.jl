@@ -117,7 +117,7 @@ function test_player_implementation(T::Type, configs) #where {T <: PlayerType}
     choose_next_action(board, players, player, actions)
     choose_place_robber(board, players, player, BoardApi.get_admissible_robber_tiles(board))
     println(road_candidates)
-    choose_road_location(board, players, player, road_candidates)
+    choose_road_location(board, players, player, road_candidates, true)
 
     PlayerApi.give_resource!(player.player, :Brick)
     PlayerApi.give_resource!(player.player, :Wood)

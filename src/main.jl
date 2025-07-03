@@ -202,17 +202,18 @@ end
 
 function first_turn_build_settlement!(board::Board, players::AbstractVector{PlayerPublicView}, player::PlayerType)
     candidates = BoardApi.get_admissible_settlement_locations(board, player.player.team, true)
-    coord = choose_building_location(board, players, player, candidates, :Settlement)
+    coord = choose_building_location(board, players, player, candidates, :Settlement, true)
     BoardApi.build_settlement!(board, player.player.team, coord)
 end
 
-function choose_validate_build_road!(board::Board, players::AbstractVector{PlayerPublicView}, player::PlayerType, is_first_turn = false)
+function choose_validate_build_road!(board::Board, players::AbstractVector{PlayerPublicView}, player::PlayerType, is_first_turn = false, is_dev_card = false)
     candidates = BoardApi.get_admissible_road_locations(board, player.player.team, is_first_turn)
     if length(candidates) == 0
         @debug "Not possible for $(player.player.team) to construct a road at this time"
         return
     end
-    coord = choose_road_location(board, players, player, candidates)
+    do_pay_cost = !is_first_turn && !is_dev_card
+    coord = choose_road_location(board, players, player, candidates, do_pay_cost)
     if coord !== nothing
         BoardApi.build_road!(board, player.player.team, coord[1], coord[2])
     end

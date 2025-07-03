@@ -24,7 +24,7 @@ end
 `candidates` is guaranteed to be non-empty.  Given all legal road placements, 
 return a `Vector` containing two coordinates signifying the road placement choice.
 """
-function choose_road_location(board::Board, players::AbstractVector{PlayerPublicView}, player::RobotPlayer, candidates::Vector{Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}})::Union{Nothing,Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}} where {TInt <: Integer}
+function choose_road_location(board::Board, players::AbstractVector{PlayerPublicView}, player::RobotPlayer, candidates::Vector{Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}}, do_pay_cost = true)::Union{Nothing,Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}} where {TInt <: Integer}
     return sample(candidates)
 end
 
@@ -35,7 +35,7 @@ end
 
 `candidates` is guaranteed to be non-empty.  This method is only called if there is a legal placement available.
 """
-function choose_building_location(board::Board, players::AbstractVector{PlayerPublicView}, player::RobotPlayer, candidates::Vector{Tuple{TInt, TInt}}, building_type::Symbol)::Tuple{TInt, TInt} where {TInt <: Integer}
+function choose_building_location(board::Board, players::AbstractVector{PlayerPublicView}, player::RobotPlayer, candidates::Vector{Tuple{TInt, TInt}}, building_type::Symbol, is_first_turn = false)::Tuple{TInt, TInt} where {TInt <: Integer}
     @debug "$(player.player.team) chooses $building_type location randomly"
     return sample(candidates, 1)[1]
 end
@@ -134,14 +134,15 @@ function choose_next_action(board::Board, players::AbstractVector{PlayerPublicVi
     if name == :ConstructSettlement
         candidates_unwrapped = [x[1] for x in candidates]
         coord = choose_building_location(board, players::AbstractVector{PlayerPublicView}, player, candidates_unwrapped, :Settlement)
-        return ChosenAction(name, coord)
+        return ChosenAction(name, coord, candidates[1][end])
     end
     if name == :ConstructRoad
-        candidates_unwrapped = [x::Tuple{Tuple{Int8,Int8}, Tuple{Int8, Int8}} for x in candidates]
-        coord = choose_road_location(board, players::AbstractVector{PlayerPublicView}, player, candidates_unwrapped)
+        is_first_turn = candidates[1][end]::Bool
+        typed_candidates = [x[1:2]::Tuple{Tuple{Int8,Int8}, Tuple{Int8,Int8}} for x in candidates]
+        coord = choose_road_location(board, players::AbstractVector{PlayerPublicView}, player, typed_candidates, is_first_turn)
         coord1 = coord[1]
         coord2 = coord[2]
-        return ChosenAction(name, coord1, coord2)
+        return ChosenAction(name, coord1, coord2, is_first_turn)
     end
     if name == :BuyDevCard
         return ChosenAction(name)

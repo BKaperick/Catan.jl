@@ -26,7 +26,7 @@ function choose_building_location(board::Board, players::AbstractVector{PlayerPu
     end
     return coord
 end
-function choose_road_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple})::Vector{Tuple{Int8,Int8}}
+function choose_road_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple}, do_pay_cost::Bool = true)::Vector{Tuple{Int8,Int8}}
     road_coord1 = nothing
     road_coord2 = nothing
     road_coords = Vector{Tuple{Int,Int}}()
