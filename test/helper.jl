@@ -108,7 +108,7 @@ function test_player_implementation(T::Type, configs) #where {T <: PlayerType}
     player.player.devcards = devcards
 
     choose_accept_trade(board, player, from_player, from_goods, to_goods)
-    coord = choose_building_location(board, players, player, settlement_candidates, :Settlement)
+    coord = choose_building_location(board, players, player, settlement_candidates, :Settlement, true)
     BoardApi.build_settlement!(board, player.player.team, coord)
     road_candidates = BoardApi.get_admissible_road_locations(board, player.player.team, true)
     choose_building_location(board, players, player, [coord], :City)
