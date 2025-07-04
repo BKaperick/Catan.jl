@@ -111,16 +111,24 @@ function test_player_implementation(T::Type, configs) #where {T <: PlayerType}
     coord = choose_building_location(board, players, player, settlement_candidates, :Settlement, true)
     BoardApi.build_settlement!(board, player.player.team, coord)
     road_candidates = BoardApi.get_admissible_road_locations(board, player.player.team, true)
+
+    PlayerApi.give_resource!(player.player, :Grain)
+    PlayerApi.give_resource!(player.player, :Grain)
+    PlayerApi.give_resource!(player.player, :Stone)
+    PlayerApi.give_resource!(player.player, :Stone)
+    PlayerApi.give_resource!(player.player, :Stone)
     choose_building_location(board, players, player, [coord], :City)
+
+    PlayerApi.give_resource!(player.player, :Pasture)
     choose_one_resource_to_discard(board, players, player)
     choose_monopoly_resource(board, players, player)
     choose_next_action(board, players, player, actions)
     choose_place_robber(board, players, player, BoardApi.get_admissible_robber_tiles(board))
-    println(road_candidates)
-    choose_road_location(board, players, player, road_candidates, true)
-
+    
     PlayerApi.give_resource!(player.player, :Brick)
     PlayerApi.give_resource!(player.player, :Wood)
+    choose_road_location(board, players, player, road_candidates, true)
+
     BoardApi.build_road!(board, player.player.team, road_candidates[1][1], road_candidates[1][1])
     road_candidates = BoardApi.get_admissible_road_locations(board, player.player.team, false)
     @test ~isempty(road_candidates)

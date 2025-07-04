@@ -248,7 +248,7 @@ function get_legal_actions(game, board, player::Player)::Set{PreAction}
     return actions
 end
 
-action_construct_city(g::Game, b::Board, p::PlayerType, coord) = construct_city(b, p.player, coord)
+action_construct_city(g::Game, b::Board, p::PlayerType, coord, first_turn = false) = construct_city(b, p.player, coord)
 action_construct_settlement(g::Game, b::Board, p::PlayerType, coord, first_turn) = construct_settlement(b, p.player, coord, first_turn)
 action_construct_road(g::Game, b::Board, p::PlayerType, coord1, coord2, do_pay_cost) = construct_road(b, p.player, coord1, coord2, do_pay_cost)
 action_buy_devcard(g::Game, b::Board, p::PlayerType) = draw_devcard(g, b, p.player)
