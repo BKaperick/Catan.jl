@@ -13,5 +13,5 @@ julia -e "include(\"run_without_learning.jl\"); benchmark_one_game(\"configs/ben
 
 cp run.jl ../CatanEngine.jl/benchmarks/
 cp configs/benchmark_run.toml ../CatanEngine.jl/benchmarks/
-cp release_benchmark.sh ../CatanEngine.jl/benchmarks/
+cp release_benchmark_catan.sh ../CatanEngine.jl/benchmarks/release_benchmark.sh
 cp benchmark_catan_release.txt ../CatanEngine.jl/benchmarks/

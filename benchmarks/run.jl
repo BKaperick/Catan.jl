@@ -192,15 +192,12 @@ function benchmark_dry_run(config_file::String)
     Catan.run(configs)
 end
 
-function benchmark_one_game(config_file::String, descr::String)
+function benchmark_one_tournament(config_file::String, descr::String)
     configs = Catan.parse_configs(config_file)
     output_file = configs["BENCHMARK_OUTPUT"]
     io = open(output_file, "a")
-    #t = BenchmarkTools.run(@benchmarkable Catan.run($configs) seconds=60)
-    #show(stdout, MIME"text/plain"(), t)
-    #println("")
-
     benchmark_run(configs, io, descr, 60)
+    close(io)
 end
 
 function benchmark_run(config_file::String)
@@ -237,7 +234,7 @@ function benchmark_run(config_file::String)
 end
 
 function benchmark_run(configs::Dict, io, descr, secs=10)
-    b = @benchmarkable Catan.run($configs) seconds=secs
+    b = @benchmarkable CatanLearning.run_tournament($configs) seconds=secs
     t = BenchmarkTools.run(b)
 
     # Print to REPL
