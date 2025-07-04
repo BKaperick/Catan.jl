@@ -125,9 +125,11 @@ end
 function memory_profile_run(config_file)
     configs = Catan.parse_configs(config_file)
     #@profview Catan.run(configs)
-    Catan.run(configs)
+    #Catan.run(configs)
+    CatanLearning.run_tournament(configs)
     Profile.Allocs.clear()
-    Profile.Allocs.@profile sample_rate=.1 Catan.run(configs)
+    #Profile.Allocs.@profile sample_rate=.05 Catan.run(configs)
+    Profile.Allocs.@profile sample_rate=.05 CatanLearning.run_tournament(configs)
     #Profile.Allocs.@profile sample_rate=1 Catan.run(configs)
     PProf.Allocs.pprof(from_c=false)
 end

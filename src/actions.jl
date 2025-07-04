@@ -97,6 +97,7 @@ function do_devcard_action(board, players::AbstractVector{PlayerType}, player::P
     else
         @assert false
     end
+    return
 end
 
 function do_road_building_action(board, players::AbstractVector{PlayerPublicView}, player::PlayerType)
