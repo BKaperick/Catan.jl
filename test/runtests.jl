@@ -537,7 +537,7 @@ end
     @test player1.player.ports[:Grain] == 2
     @test player1.player.ports[:Wood] == 3
 
-    Catan.construct_settlement(board, player1.player, (3,2))
+    Catan.construct_settlement(board, player1.player, (3,2), true)
     
     @test player1.player.ports[:Brick] == 2
 end
