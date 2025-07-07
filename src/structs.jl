@@ -1,4 +1,3 @@
-
 mutable struct Game
     devcards::Dict{Symbol,Int8}
     players::AbstractVector{PlayerType}
@@ -100,6 +99,8 @@ struct PreAction
         new(name, unique(admissible_args))
     end
 end
+
+Base.:(==)(x::PreAction, y::PreAction) = x.name == y.name && x.admissible_args == y.admissible_args
 
 struct ChosenAction
     name::Symbol

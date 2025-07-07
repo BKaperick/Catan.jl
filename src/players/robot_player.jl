@@ -7,7 +7,6 @@ get_admissible_devcards(player::RobotPlayer) = PlayerApi.get_admissible_devcards
 Decides whether `player` will accept the trade from `from_player`.  The trade is not performed within this function.
 """
 function choose_accept_trade(board::Board, player::RobotPlayer, from_player::PlayerPublicView, from_goods, to_goods)::Bool
-    @warn "$player is considering"
     return rand() > .5
 end
 

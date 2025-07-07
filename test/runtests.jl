@@ -86,8 +86,9 @@ end
     #@show length(JET.get_reports(rep))
     #@show rep
     reports = JET.get_reports(rep)
-    println("length(JET.get_reports(rep)) = $(length(reports))")
-    @test length(reports) <= 12
+    max_num = 12
+    println("length(JET.get_reports(rep)) = $(length(reports)) / $max_num")
+    @test length(reports) <= max_num
 end
 
 @testitem "actions" setup=[global_test_setup] begin

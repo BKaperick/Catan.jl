@@ -34,7 +34,7 @@ ACTIONS_DICTIONARY = Dict(
 # CONSTRUCTION ACTIONS
 #
 
-function construct_road(board, player::Player, coord1::Tuple{TInt, TInt}, coord2::Tuple{TInt, TInt}, do_pay_cost = true) where {TInt <: Integer}
+function construct_road(board, player::Player, coord1::Tuple{TInt, TInt}, coord2::Tuple{TInt, TInt}, do_pay_cost) where {TInt <: Integer}
     if do_pay_cost
         PlayerApi.pay_construction(player, :Road)
         BoardApi.pay_construction!(board, :Road)
@@ -226,13 +226,13 @@ function get_legal_actions(game, board, player::Player)::Set{PreAction}
     end
 
     admissible_settlements = BoardApi.get_admissible_settlement_locations(board, player.team, is_first_turn)
-    resource_check = !is_first_turn && PlayerApi.has_enough_resources(player, COSTS[:Settlement])
+    resource_check = is_first_turn || PlayerApi.has_enough_resources(player, COSTS[:Settlement])
     if resource_check && length(admissible_settlements) > 0
         push!(actions, PreAction(:ConstructSettlement, Vector{Tuple}([(c,is_first_turn) for c in admissible_settlements])))
     end
 
     admissible_roads = BoardApi.get_admissible_road_locations(board, player.team, is_first_turn)
-    resource_check = !is_first_turn && PlayerApi.has_enough_resources(player, COSTS[:Road])
+    resource_check = is_first_turn || PlayerApi.has_enough_resources(player, COSTS[:Road])
     if resource_check && length(admissible_roads) > 0
         push!(actions, PreAction(:ConstructRoad, Vector{Tuple}([(r...,is_first_turn) for r in admissible_roads])))
     end

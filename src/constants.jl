@@ -16,6 +16,8 @@ function _upsert_configs!(new::Dict, old::Dict)
             new[k] = v
         elseif v isa Dict
             _upsert_configs!(new[k], v)
+        elseif v != new[k]
+            @debug "updating config $k from $v -> $(new[k])"
         end
     end
 end
@@ -27,6 +29,7 @@ end
 parse_configs(config_path::String) = parse_configs(config_path, DEFAULT_CONFIGS)
 
 function parse_configs(config_path::String, old::Dict)
+    @info "Adding new configs: $config_path"
     configs = TOML.parsefile(config_path)::Dict{String, Any}
     _upsert_configs!(configs, old)
     out = _parse_configs(configs)
