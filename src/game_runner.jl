@@ -214,7 +214,7 @@ end
 function print_player_stats(game, board, player::Player)
     public_points = BoardApi.get_public_vp_count(board, player.team)
     total_points = get_total_vp_count(board, player)
-    @info "$(player.team) has $total_points points on turn $(game.turn_num) ($public_points points were public)"
+    @info "$(player) has $total_points points on turn $(game.turn_num) ($public_points points were public)"
     BoardApi.print_board_stats(board, player.team)
     if board.largest_army == player.team
         @info "Largest Army ($(player.devcards_used[:Knight]) knights)"

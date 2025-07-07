@@ -811,10 +811,13 @@ function run_tests(neverend = false)
 SAVE_FILE = "data/savefile.txt"
 SAVE_MAP = "data/_temp_map_file.csv"
 LOAD_MAP = "sample.csv"
-#LOG_OUTPUT = "./data/oneoff_test_log.txt"
-LOG_LEVEL = "Logging.Warn"
 PRINT_BOARD = false
 MAX_TURNS = 500
+
+[LogSettings]
+#LOG_OUTPUT = "./data/oneoff_test_log.txt"
+LOG_LEVEL = "Logging.Warn"
+
 
 [GameSettings]
 [PlayerSettings]

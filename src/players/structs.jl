@@ -94,7 +94,7 @@ function Base.show(io::IO, p::PlayerType)
     if compact
         print(io, "$(p.player)")
     else
-        print(io, "$(typeof(p))($(p.player))")
+        print(io, "$(p.player)")
     end
 end
 

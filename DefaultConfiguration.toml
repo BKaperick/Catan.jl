@@ -4,11 +4,13 @@ SAVE_FILE = "./data/savefile.txt"
 TEMP_DIR = "./tmp/"
 SAVE_MAP = "./tmp/_temp_map_file.csv"
 LOAD_MAP = ""
-LOG_OUTPUT = "stderr"
-LOG_LEVEL = "Info"
 PRINT_BOARD = false
 MAX_TURNS = 1000
 ASYNC = false
+
+[LogSettings]
+LOG_OUTPUT = "stderr"
+LOG_LEVEL = "Info"
 
 [GameSettings]
 VICTORY_POINT_GOAL = 10

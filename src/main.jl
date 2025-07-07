@@ -132,7 +132,7 @@ function decide_largest_army(board::Board, players::AbstractVector{PlayerType}):
 end
 
 function harvest_one_resource!(board::Board, player::Player, resource::Symbol, count::Integer)
-    @info "$(player.team) harvests $count $resource"
+    @info "$(player) harvests $count $resource"
     for i=1:count
         if BoardApi.can_draw_resource(board, resource)
             PlayerApi.give_resource!(player, resource)
@@ -209,7 +209,7 @@ end
 function choose_validate_build_road!(board::Board, players::AbstractVector{PlayerPublicView}, player::PlayerType, is_first_turn = false, is_dev_card = false)
     candidates = BoardApi.get_admissible_road_locations(board, player.player.team, is_first_turn)
     if length(candidates) == 0
-        @debug "Not possible for $(player.player.team) to construct a road at this time"
+        @debug "Not possible for $(player) to construct a road at this time"
         return
     end
     do_pay_cost = !is_first_turn && !is_dev_card

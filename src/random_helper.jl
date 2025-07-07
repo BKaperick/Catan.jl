@@ -13,7 +13,7 @@ function unsafe_random_sample_one_resource(resources::Dict{Symbol, T}, replace=f
     return sample(items, 1, replace=replace)[1]
 end
 
-function random_sample_resources(resources::Dict{Symbol, Int}, count::Int, replace=false)::Vector{Symbol}
+function random_sample_resources(resources::Dict{Symbol, Int}, count, replace=false)::Vector{Symbol}
     items = Vector{Symbol}()
     for (r,c) in resources
         if c > 0

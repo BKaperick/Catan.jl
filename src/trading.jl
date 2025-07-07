@@ -39,17 +39,18 @@ function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, 
             #@info "$(player) accepts the trade proposal"
             # We do this after the "choose" step to not leak information from player's hand
             if PlayerApi.has_enough_resources(player.player, to_goods_dict) 
+                @warn "$player doesn't have enough resources"
                 push!(accepted, player.player)
                 push!(accepted_public, PlayerPublicView(player.player))
             end
         end
     end
-    @info "$(from_player) proposes $from_goods for $to_goods_dict:"
+    @warn "$(from_player) proposes $from_goods for $to_goods_dict:"
     if length(accepted) == 0
-        @info "Noone accepted"
+        @warn "Noone accepted"
         return
     else 
-        @info "$(join([p.team for p in accepted_public], ",")) accept the trade"
+        @warn "$(join([p.team for p in accepted_public], ",")) accept the trade"
     end
     to_player_team = choose_who_to_trade_with(board, from_player, accepted_public)
     to_player = [p for p in accepted if p.team == to_player_team][1]
@@ -61,6 +62,7 @@ function trade_goods(players, from_player::Player, to_player_team::Symbol, amoun
     to_player = [p for p in players if p.player.team == to_player_team][1]
     from_goods = length(resource_symbols) > 0 ? collect(resource_symbols[1:amount]) : Vector{Symbol}()
     to_goods = length(resource_symbols) > 0 ? collect(resource_symbols[amount+1:end]) : Vector{Symbol}()
+    @warn "\tTrading $from_player($from_goods) -> $to_player($to_goods)"
     return trade_goods(from_player, to_player, from_goods, to_goods)
 end
 

@@ -35,7 +35,7 @@ function parse_configs(config_path::String, old::Dict)
 end
 
 function _parse_configs(configs::Dict)
-    parse_logging_configs!(configs)
+    parse_logging_configs!(configs["LogSettings"])
     reset_savefile!(configs)
     return configs
 end
@@ -98,14 +98,14 @@ function make_logger(log_level::LogLevel, logger_output::String)
     return (logger,log_level,logger_io)
 end
 
-function parse_logging_configs!(user_configs::Dict)
-    log_level_str = user_configs["LOG_LEVEL"]
-    logger_output = user_configs["LOG_OUTPUT"]
+function parse_logging_configs!(log_configs::Dict)
+    log_level_str = log_configs["LOG_LEVEL"]
+    logger_output = log_configs["LOG_OUTPUT"]
     (logger,log_level,logger_io) = make_logger(log_level_str, logger_output)
 
-    user_configs["LOG_LEVEL"] = log_level
-    user_configs["LOGGER_IO"] = logger_io
-    user_configs["LOGGER"] = logger
+    log_configs["LOG_LEVEL"] = log_level
+    log_configs["LOGGER_IO"] = logger_io
+    log_configs["LOGGER"] = logger
     global_logger(logger)
 end
 
