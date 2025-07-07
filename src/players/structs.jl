@@ -45,6 +45,15 @@ struct PlayerPublicView
     devcards_count::Int8
 end
 
+function Base.show(io::IO, a::PlayerPublicView)
+    compact = get(io, :compact, false)
+    if compact
+        print(io, "Public($(a.team))")
+    else
+        print(io, "Public($(a.team), $(a.resource_count), $(a.devcards_count))")
+    end
+end
+
 PlayerPublicView(player::PlayerPublicView) = player;
 PlayerPublicView(player::PlayerType) = PlayerPublicView(player.player)
 PlayerPublicView(player::Player) = PlayerPublicView(

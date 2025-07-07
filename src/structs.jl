@@ -107,6 +107,32 @@ struct ChosenAction
     ChosenAction(name::Symbol, args...) = new(name, args)
 end
 
+function Base.show(io::IO, a::ChosenAction)
+    compact = get(io, :compact, false)
+    if length(a.args) == 0
+        print(io, "$(a.name)()")
+        return
+    end
+    if compact
+        print(io, "$(a.name)(...)")
+    else
+        print(io, "$(a.name)($(a.args))")
+    end
+end
+
+function Base.show(io::IO, a::PreAction)
+    compact = get(io, :compact, false)
+    if length(a.admissible_args) == 0
+        print(io, "$(a.name)()")
+        return
+    end
+    if compact
+        print(io, "$(a.name)(...)")
+    else
+        print(io, "$(a.name)($(a.admissible_args))")
+    end
+end
+
 PreAction(name::Symbol) = PreAction(name, Vector{Tuple{Any}}())
 PreAction(name::Symbol, arg::Vector{Symbol}) = PreAction(name, [(s,) for s in arg])
 #PreAction(name::Symbol, arg::Vector{Tuple}) = PreAction(name, [(s,) for s in arg])
