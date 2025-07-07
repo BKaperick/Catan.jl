@@ -36,7 +36,7 @@ function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, 
             continue
         end
         if choose_accept_trade(board, player, from_player_public, from_goods, to_goods)
-            #@info "$(player.player.team) accepts the trade proposal"
+            #@info "$(player) accepts the trade proposal"
             # We do this after the "choose" step to not leak information from player's hand
             if PlayerApi.has_enough_resources(player.player, to_goods_dict) 
                 push!(accepted, player.player)
@@ -44,7 +44,7 @@ function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, 
             end
         end
     end
-    @info "$(from_player.player.team) proposes $from_goods for $to_goods_dict:"
+    @info "$(from_player) proposes $from_goods for $to_goods_dict:"
     if length(accepted) == 0
         @info "Noone accepted"
         return

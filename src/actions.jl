@@ -84,7 +84,7 @@ function do_play_devcard(board::Board, players, player, card::Union{Nothing,Symb
 end
 
 function do_devcard_action(board, players::AbstractVector{PlayerType}, player::PlayerType, card::Symbol)
-    @info "$(player.player.team) does devcard $card action"
+    @info "$(player) does devcard $card action"
     players_public = PlayerPublicView.(players)
     if card == :Knight
         do_knight_action(board, players, player)
@@ -118,7 +118,7 @@ function do_monopoly_action(board, players::AbstractVector{PlayerType}, player::
     players_public = PlayerPublicView.(players)
     res = choose_monopoly_resource(board, players_public, player)
     for victim in players
-        @info "$(victim.player.team) gives $(PlayerApi.count_resource(victim.player, res)) $res to $(player.player.team)"
+        @info "$(victim) gives $(PlayerApi.count_resource(victim.player, res)) $res to $(player)"
         for i in 1:PlayerApi.count_resource(victim.player, res)
             PlayerApi.take_resource!(victim.player, res)
             PlayerApi.give_resource!(player.player, res)
@@ -152,7 +152,7 @@ function do_robber_move_theft(board, players::AbstractVector{PlayerType}, player
     players_public = PlayerPublicView.(players)
     candidate_tiles = BoardApi.get_admissible_robber_tiles(board) 
     new_robber_tile = choose_place_robber(board, players_public, player, candidate_tiles)::Symbol
-    @info "$(player.player.team) moves robber to $new_robber_tile"
+    @info "$(player) moves robber to $new_robber_tile"
     players_public = PlayerPublicView.(players)
     admissible_victims_public = [p.team for p in get_admissible_theft_victims(board, players_public, player.player, new_robber_tile)]
     admissible_victims = Vector{PlayerType}([p for p in players if p.player.team in admissible_victims_public])

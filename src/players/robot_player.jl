@@ -12,7 +12,7 @@ end
 
 function roll_dice(player::RobotPlayer)::Integer
     value = Int8(rand(1:6) + rand(1:6))
-    @info "$(player.player.team) rolled a $value"
+    @info "$(player) rolled a $value"
     return value
 end
 
@@ -36,7 +36,7 @@ end
 `candidates` is guaranteed to be non-empty.  This method is only called if there is a legal placement available.
 """
 function choose_building_location(board::Board, players::AbstractVector{PlayerPublicView}, player::RobotPlayer, candidates::Vector{Tuple{TInt, TInt}}, building_type::Symbol, is_first_turn = false)::Tuple{TInt, TInt} where {TInt <: Integer}
-    @debug "$(player.player.team) chooses $building_type location randomly"
+    @debug "$(player) chooses $building_type location randomly"
     return sample(candidates, 1)[1]
 end
 
@@ -99,7 +99,7 @@ The robber has already been placed, so here `player` decided which adjacent play
 """
 function choose_robber_victim(board::Board, player::RobotPlayer, potential_victims::PlayerPublicView...)::PlayerPublicView
     random_player = sample(collect(potential_victims), 1)[1]
-    @info "$(player.player.team) decided it is wisest to steal from the $(random_player.team) player"
+    @info "$(player) decided it is wisest to steal from the $(random_player) player"
     return random_player
 end
 
@@ -183,6 +183,6 @@ function choose_who_to_trade_with(board::Board, player::RobotPlayer, players::Ab
     while max_ind.team == player.player.team
         max_ind = sample(collect(players), 1)[1]
     end
-    @info "$(player.player.team) decided it is wisest to do business with $(max_ind.team) player"
+    @info "$(player) decided it is wisest to do business with $(max_ind.team) player"
     return max_ind.team
 end

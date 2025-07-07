@@ -80,7 +80,23 @@ mutable struct DefaultRobotPlayer <: RobotPlayer
     player::Player
 end
 
-#PlayerType(team::Symbol, mutation::Dict{Symbol, AbstractFloat}, configs::Dict) = PlayerType(team, configs::Dict)
+function Base.show(io::IO, p::Player)
+    compact = get(io, :compact, false)
+    if compact
+        print(io, "$(p.team)")
+    else
+        print(io, "$(p.team)")
+    end
+end
+
+function Base.show(io::IO, p::PlayerType)
+    compact = get(io, :compact, false)
+    if compact
+        print(io, "$(p.player)")
+    else
+        print(io, "$(typeof(p))($(p.player))")
+    end
+end
 
 HumanPlayer(team::Symbol, io::IO, configs::Dict) = HumanPlayer(Player(team, configs), io)
 HumanPlayer(team::Symbol, configs::Dict) = HumanPlayer(team, stdin, configs)
