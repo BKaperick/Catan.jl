@@ -19,14 +19,18 @@ Then, finally, `from_player` will decide among the accepted players, `accepted_p
 the trade.
 """
 function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, from_player::PlayerType, from_goods, to_goods)
-    to_goods_dict = Dict{Symbol,Int}()
+    to_goods_dict = Dict{Symbol,UInt8}()
     for g in to_goods
         if haskey(to_goods_dict,g)
-            to_goods_dict[g] += 1
+            to_goods_dict[g] += UInt8(1)
         else
-            to_goods_dict[g] = 1
+            to_goods_dict[g] = UInt8(1)
         end
     end
+    propose_trade_goods(board, players, from_player, from_goods, to_goods, to_goods_dict)
+end
+
+function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, from_player::PlayerType, from_goods, to_goods, to_goods_dict::Dict{Symbol, UInt8})
     accepted = Vector{Player}()
     accepted_public = Vector{PlayerPublicView}()
     from_player_public = PlayerPublicView(from_player.player)

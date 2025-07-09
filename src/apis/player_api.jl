@@ -140,7 +140,7 @@ function has_any_resources(player::PlayerPublicView)::Bool
     return player.resource_count > 0
 end
 
-function has_enough_resources(player::Player, resources::Dict{Symbol,Int})::Bool
+function has_enough_resources(player::Player, resources::Dict{Symbol,TInt})::Bool where TInt <: Integer
     for (r,amt) in resources
         if !haskey(player.resources, r)
             return false
