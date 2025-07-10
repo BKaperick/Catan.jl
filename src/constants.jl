@@ -46,14 +46,14 @@ end
 get_player_config(player::PlayerType, key) = get_player_config(player.player.configs, key, player.player.team)
 
 """
-    get_player_config(configs, team, key)
+    get_player_config(configs, key, team_sym = nothing)
 
 Retrieves the `key`, potentially overridden for this team.  This accessor method handles the fallback to a default
 value set at the `configs["PlayerSettings"]` level, and custom player-level values set in `configs["PlayerSettings"][team]`.
 """
 function get_player_config(configs, key, team_sym = nothing)
     player_config = configs["PlayerSettings"]
-    team = String(team_sym)
+    team = team_sym === nothing ? nothing : String(team_sym)
     if team !== nothing && haskey(player_config, team) && haskey(player_config[team], key)
         return player_config[team][key]
     elseif haskey(player_config, key)
@@ -62,6 +62,18 @@ function get_player_config(configs, key, team_sym = nothing)
         @warn "PlayerSettings.$key has not been set "
         return nothing
     end
+end
+
+"""
+    set_player_config(configs, team_sym, key, value)
+
+Retrieves the `key`, potentially overridden for this team.  This accessor method handles the fallback to a default
+value set at the `configs["PlayerSettings"]` level, and custom player-level values set in `configs["PlayerSettings"][team]`.
+"""
+function set_player_config(configs, team_sym, key, value)
+    team = String(team_sym)
+    player_config = configs["PlayerSettings"][team]
+    player_config[key] = value
 end
 
 function make_logger(log_level::String, logger_output::String)
