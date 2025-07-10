@@ -1,6 +1,6 @@
 using Documenter, Catan
 
-makedocs(sitename="CatanEngine.jl Documentation")
+makedocs(sitename="Catan.jl Documentation")
 deploydocs(
-    repo = "github.com/BKaperick/CatanEngine.jl.git",
+    repo = "github.com/BKaperick/Catan.jl.git",
 )
