@@ -12,7 +12,7 @@
 [ci-img]: https://github.com/Bkaperick/Catan.jl/actions/workflows/ci.yaml/badge.svg
 [ci-url]: https://github.com/Bkaperick/Catan.jl/actions?query=workflow%3ACI+branch%3Amaster
 
-<img src="https://github.com/BKaperick/Catan.jl/blob/master/logos/engine_cleaned_logo.svg" data-canonical-src="https://github.com/BKaperick/Catan.jl/blob/master/logos/engine_cleaned_logo.svg" width="200" align="right" />
+<img src="https://github.com/BKaperick/Catan.jl/blob/master/logos/cleaned_logo.svg" data-canonical-src="https://github.com/BKaperick/Catan.jl/blob/master/logos/cleaned_logo.svg" width="200" align="right" />
 
 A full Julia engine for playing the extremely popular board game [Settlers of Catan](https://www.catan.com/) with a mixture of human and custom scripted players.
 
