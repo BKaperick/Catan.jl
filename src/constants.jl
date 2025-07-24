@@ -267,7 +267,7 @@ const COORD_TO_PORTNUM = Dict([
                          (3,2) => 9,
                          (2,1) => 9
                         ])
-const TILE_TO_ISOLATED_EDGE_COORDS = Dict([
+const TILE_TO_ISOLATED_EDGE_COORDS = Dict{Symbol, Set{Tuple{Int8, Int8}}}([
                       :A => Set([(1,1),(1,2)]),
                       :B => Set([(1,4)]),
                       :C => Set([(1,6),(1,7)]),
@@ -292,7 +292,7 @@ const TILE_TO_ISOLATED_EDGE_COORDS = Dict([
                       :R => Set([(6,4)]),
                       :S => Set([(6,6),(6,7)]),
                            ])
-const TILE_TO_EDGE_COORDS = Dict(
+const TILE_TO_EDGE_COORDS = Dict{Symbol, Set{Tuple{Int8, Int8}}}(
                       :A => Set([(1,1),(1,2),(1,3),(2,2)]),
                       :B => Set([(1,3),(1,4),(1,5)]),
                       :C => Set([(1,5),(1,6),(1,7),(2,8)]),
@@ -317,7 +317,7 @@ const TILE_TO_EDGE_COORDS = Dict(
                       :R => Set([(6,3),(6,4),(6,5)]),
                       :S => Set([(6,5),(6,6),(6,7),(5,8)]),
                      )
-const TILE_TO_COORDS = Dict(
+const TILE_TO_COORDS = Dict{Symbol, Set{Tuple{Int8, Int8}}}(
                       :A => Set([(1,1),(1,2),(1,3),(2,2),(2,3),(2,4)]),
                       :B => Set([(1,3),(1,4),(1,5),(2,4),(2,5),(2,6)]),
                       :C => Set([(1,5),(1,6),(1,7),(2,6),(2,7),(2,8)]),

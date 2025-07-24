@@ -22,7 +22,7 @@ end
     ::Vector{Tuple{Int, Int}}
 
 `candidates` is guaranteed to be non-empty.  Given all legal road placements, 
-return a `Vector` containing two coordinates signifying the road placement choice.
+return a `Tuple` containing two coordinates signifying the road placement choice.
 """
 function choose_road_location(board::Board, players::AbstractVector{PlayerPublicView}, player::RobotPlayer, candidates::Vector{Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}}, do_pay_cost = true)::Union{Nothing,Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}} where {TInt <: Integer}
     return sample(candidates)

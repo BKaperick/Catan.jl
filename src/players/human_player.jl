@@ -34,7 +34,8 @@ function choose_building_location(board::Board, players::AbstractVector{PlayerPu
     end
     return coord
 end
-function choose_road_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple}, do_pay_cost::Bool = true)::Vector{Tuple{Int8,Int8}}
+
+function choose_road_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}}, do_pay_cost = true)::Union{Nothing,Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}} where {TInt <: Integer}
     road_coord1 = nothing
     road_coord2 = nothing
     road_coords = Vector{Tuple{Int,Int}}()
@@ -50,7 +51,7 @@ function choose_road_location(board::Board, players::AbstractVector{PlayerPublic
         road_coord2 = road_coords[2]
     end
     @info road_coords
-    return road_coords
+    return Tuple(road_coords)
 end
 
 function choose_place_robber(board::Board, players::AbstractVector{PlayerType}, player::HumanPlayer, candidates::Vector{Symbol})
