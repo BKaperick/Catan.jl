@@ -13,14 +13,8 @@ function right_angle(b,x,y)
     b[y+2][x+2] = "o"
     b[y+1][x+1] = "\\"
 end
-function hexagon(board, tile, b,x,y)
-    # Draw base shape
-    left_angle(b,x,y)
-    right_angle(b,x+3,y)
-    upper_left_angle(b,x,y+4)
-    upper_right_angle(b,x+3,y+4)
 
-    # Add tile info
+function add_resource_and_dice_value(board, tile, b, x, y)
     b[y+2][x+1] = string(string(board.tile_to_resource[tile])[1])
     number = string(board.tile_to_dicevalue[tile])
     if length(number) == 2
@@ -29,6 +23,21 @@ function hexagon(board, tile, b,x,y)
 
     else
         b[y+2][x+2] = string(number)
+    end
+end
+
+function hexagon(board, tile, b,x,y, print_tile_sym)
+    # Draw base shape
+    left_angle(b,x,y)
+    right_angle(b,x+3,y)
+    upper_left_angle(b,x,y+4)
+    upper_right_angle(b,x+3,y+4)
+
+    # Add tile info
+    if print_tile_sym
+        b[y+2][x+1] = string(tile)
+    else
+        add_resource_and_dice_value(board, tile, b, x, y)
     end
 
     # Add coordinate info
@@ -142,7 +151,7 @@ function double_right_angle(b,x,y)
     b[y-1][x+1] = "/"
 end
 
-function print_board(board::Board)
+function print_board(board::Board, print_tile_sym = false)
     X = 48
     Y = 34
     b = repeat([repeat([" "], X)], Y)
@@ -150,29 +159,29 @@ function print_board(board::Board)
         b[i] = copy(r)
     end 
     
-    hexagon(board,:S,b,23,1)
-    hexagon(board,:R,b,18,3)
-    hexagon(board,:Q,b,13,5)
+    hexagon(board,:S,b,23,1, print_tile_sym)
+    hexagon(board,:R,b,18,3, print_tile_sym)
+    hexagon(board,:Q,b,13,5, print_tile_sym)
     
-    hexagon(board,:P,b,28,3)
-    hexagon(board,:O,b,23,5)
-    hexagon(board,:N,b,18,7)
-    hexagon(board,:M,b,13,9)
+    hexagon(board,:P,b,28,3, print_tile_sym)
+    hexagon(board,:O,b,23,5, print_tile_sym)
+    hexagon(board,:N,b,18,7, print_tile_sym)
+    hexagon(board,:M,b,13,9, print_tile_sym)
     
-    hexagon(board,:L,b,33,5)
-    hexagon(board,:K,b,28,7)
-    hexagon(board,:J,b,23,9)
-    hexagon(board,:I,b,18,11)
-    hexagon(board,:H,b,13,13)
+    hexagon(board,:L,b,33,5, print_tile_sym)
+    hexagon(board,:K,b,28,7, print_tile_sym)
+    hexagon(board,:J,b,23,9, print_tile_sym)
+    hexagon(board,:I,b,18,11, print_tile_sym)
+    hexagon(board,:H,b,13,13, print_tile_sym)
     
-    hexagon(board,:G,b,33,9)
-    hexagon(board,:F,b,28,11)
-    hexagon(board,:E,b,23,13)
-    hexagon(board,:D,b,18,15)
+    hexagon(board,:G,b,33,9, print_tile_sym)
+    hexagon(board,:F,b,28,11, print_tile_sym)
+    hexagon(board,:E,b,23,13, print_tile_sym)
+    hexagon(board,:D,b,18,15, print_tile_sym)
     
-    hexagon(board,:C,b,33,13) # (2,4),(2,5),(1,5),(1,4),(1,3),(2,3)
-    hexagon(board,:B,b,28,15) # (2,4),(2,5),(1,5),(1,4),(1,3),(2,3)
-    hexagon(board,:A,b,23,17) # (2,3),(2,4),(1,3),(1,2),(1,1),(2,2)
+    hexagon(board,:C,b,33,13, print_tile_sym) # (2,4),(2,5),(1,5),(1,4),(1,3),(2,3)
+    hexagon(board,:B,b,28,15, print_tile_sym) # (2,4),(2,5),(1,5),(1,4),(1,3),(2,3)
+    hexagon(board,:A,b,23,17, print_tile_sym) # (2,3),(2,4),(1,3),(1,2),(1,1),(2,2)
     for (i,r) in enumerate(b)
         for rr in r
             print(rr)
