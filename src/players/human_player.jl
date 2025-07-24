@@ -6,7 +6,13 @@ function get_admissible_devcards(player::HumanPlayer)
 end
 
 function roll_dice(player::HumanPlayer)::Integer
-    Int8(parse_int(player.io, "Dice roll:", player.player.configs))
+    if get_player_config(player.player.configs, "USING_REAL_BOARD", player.player.team)
+        Int8(parse_int(player.io, "Dice roll:", player.player.configs))
+    else
+        value = Int8(rand(1:6) + rand(1:6))
+        @info "$(player) rolled a $value"
+        return value
+    end
 end
 
 function choose_one_resource_to_discard(board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer)::Symbol
@@ -14,7 +20,9 @@ function choose_one_resource_to_discard(board, players::AbstractVector{PlayerPub
     return parse_resources(player.io, "$(player) discards: ", player.player.configs)[1]
 end
 
-function choose_building_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple{Int8,Int8}}, building_type::Symbol, is_first_turn = false)::Tuple{Int8, Int8}
+
+function choose_building_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple{TInt, TInt}}, building_type::Symbol, is_first_turn = false)::Tuple{TInt, TInt} where {TInt <: Integer}
+    BoardApi.print_board(board)
     if building_type == :Settlement
         validation_check = BoardApi.is_valid_settlement_placement
     else

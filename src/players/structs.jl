@@ -103,9 +103,12 @@ HumanPlayer(team::Symbol, configs::Dict) = HumanPlayer(team, stdin, configs)
 
 DefaultRobotPlayer(team::Symbol, configs::Dict) = DefaultRobotPlayer(Player(team, configs))
 
-
 function Base.copy(player::DefaultRobotPlayer)
     return DefaultRobotPlayer(copy(player.player))
+end
+
+function Base.copy(player::HumanPlayer)
+    return HumanPlayer(copy(player.player), player.io)
 end
 
 function Base.copy(player::Player)
