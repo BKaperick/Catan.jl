@@ -245,7 +245,6 @@ function load_gamestate!(game, board)
         execute_api_call(game, board, line)
     end
     if game.configs["PRINT_BOARD"]
-        BoardApi.print_board(board, true)
         BoardApi.print_board(board)
     end
 end

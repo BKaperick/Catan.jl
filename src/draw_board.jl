@@ -151,46 +151,70 @@ function double_right_angle(b,x,y)
     b[y-1][x+1] = "/"
 end
 
-function print_board(board::Board, print_tile_sym = false)
-    X = 48
-    Y = 34
-    b = repeat([repeat([" "], X)], Y)
-    for (i,r) in enumerate(b)
-        b[i] = copy(r)
-    end 
+function print_board(board::Board)
+    left_board = fill_board(board, true)
+    right_board = fill_board(board, false)
     
-    hexagon(board,:S,b,23,1, print_tile_sym)
-    hexagon(board,:R,b,18,3, print_tile_sym)
-    hexagon(board,:Q,b,13,5, print_tile_sym)
-    
-    hexagon(board,:P,b,28,3, print_tile_sym)
-    hexagon(board,:O,b,23,5, print_tile_sym)
-    hexagon(board,:N,b,18,7, print_tile_sym)
-    hexagon(board,:M,b,13,9, print_tile_sym)
-    
-    hexagon(board,:L,b,33,5, print_tile_sym)
-    hexagon(board,:K,b,28,7, print_tile_sym)
-    hexagon(board,:J,b,23,9, print_tile_sym)
-    hexagon(board,:I,b,18,11, print_tile_sym)
-    hexagon(board,:H,b,13,13, print_tile_sym)
-    
-    hexagon(board,:G,b,33,9, print_tile_sym)
-    hexagon(board,:F,b,28,11, print_tile_sym)
-    hexagon(board,:E,b,23,13, print_tile_sym)
-    hexagon(board,:D,b,18,15, print_tile_sym)
-    
-    hexagon(board,:C,b,33,13, print_tile_sym) # (2,4),(2,5),(1,5),(1,4),(1,3),(2,3)
-    hexagon(board,:B,b,28,15, print_tile_sym) # (2,4),(2,5),(1,5),(1,4),(1,3),(2,3)
-    hexagon(board,:A,b,23,17, print_tile_sym) # (2,3),(2,4),(1,3),(1,2),(1,1),(2,2)
-    for (i,r) in enumerate(b)
-        for rr in r
+    for (r_left, r_right) in zip(left_board, right_board)
+        for rr in r_left
             print(rr)
+            print(string(Crayon(foreground=:white)))
+        end
+        for rr in r_right
+            print(rr)
+            print(string(Crayon(foreground=:white)))
+        end
+        #=
+        for (rr_left,rr_right) in zip(r_left, r_right)
+            print(rr_left)
+            print(rr_right)
             # TODO: should somehow identify terminal color if this is possible
             # Print empty white string to reset color
             print(string(Crayon(foreground=:white)))
         end
+        =#
         println()
     end
+end
+
+function fill_board(board::Board, print_tile_sym = false)
+    X = 33
+    Y = 22
+    b = repeat([repeat([" "], X)], Y)
+    for (i,r) in enumerate(b)
+        b[i] = copy(r)
+    end 
+    fill_board!(b, board, print_tile_sym)
+    return b
+end
+function fill_board!(b, board::Board, print_tile_sym = false)
+    
+    min_x = 5
+
+    hexagon(board,:S,b,min_x+10,1, print_tile_sym)
+    hexagon(board,:R,b,min_x+5,3, print_tile_sym)
+    hexagon(board,:Q,b,min_x,5, print_tile_sym)
+    
+    hexagon(board,:P,b,min_x+15,3, print_tile_sym)
+    hexagon(board,:O,b,min_x+10,5, print_tile_sym)
+    hexagon(board,:N,b,min_x+5,7, print_tile_sym)
+    hexagon(board,:M,b,min_x,9, print_tile_sym)
+    
+    hexagon(board,:L,b,min_x+20,5, print_tile_sym)
+    hexagon(board,:K,b,min_x+15,7, print_tile_sym)
+    hexagon(board,:J,b,min_x+10,9, print_tile_sym)
+    hexagon(board,:I,b,min_x+5,11, print_tile_sym)
+    hexagon(board,:H,b,min_x,13, print_tile_sym)
+    
+    hexagon(board,:G,b,min_x+20,9, print_tile_sym)
+    hexagon(board,:F,b,min_x+15,11, print_tile_sym)
+    hexagon(board,:E,b,min_x+10,13, print_tile_sym)
+    hexagon(board,:D,b,min_x+5,15, print_tile_sym)
+    
+    hexagon(board,:C,b,min_x+20,13, print_tile_sym) # (2,4),(2,5),(1,5),(1,4),(1,3),(2,3)
+    hexagon(board,:B,b,min_x+15,15, print_tile_sym) # (2,4),(2,5),(1,5),(1,4),(1,3),(2,3)
+    hexagon(board,:A,b,min_x+10,17, print_tile_sym) # (2,3),(2,4),(1,3),(1,2),(1,1),(2,2)
+
     return b
 end
 

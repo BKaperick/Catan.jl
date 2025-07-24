@@ -155,7 +155,8 @@ const HUMAN_ACTIONS = Dict(
     "br" => :ConstructRoad,
     "pt" => :ProposeTrade,
     "bd" => :BuyDevCard,
-    "pd" => :PlayDevCard
+    "pd" => :PlayDevCard,
+    "e" => :DoNothing
    )
 const ACTION_TO_DESCRIPTION = Dict(
     :ProposeTrade => "[pt] Propose trade (e.g. \"pt 2 w w g g\")",
@@ -163,7 +164,8 @@ const ACTION_TO_DESCRIPTION = Dict(
     :ConstructSettlement => "[bs] Build settlement",
     :ConstructRoad => "[br] Build road",
     :BuyDevCard => "[bd] Buy development card",
-    :PlayDevCard => "[pd] Play development card"
+    :PlayDevCard => "[pd] Play development card",
+    :DoNothing => ""
    )
 
 

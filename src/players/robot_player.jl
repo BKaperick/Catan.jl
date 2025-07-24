@@ -64,6 +64,10 @@ end
 
 function steal_random_resource(from_player::RobotPlayer, to_player::RobotPlayer)
     stolen_good = choose_card_to_steal(from_player)
+    if ~isnothing(stolen_good)
+        @info "$(to_player) stole something from $(from_player)"
+    end
+    return stolen_good
 end
 
 function choose_card_to_steal(player::RobotPlayer)::Symbol
