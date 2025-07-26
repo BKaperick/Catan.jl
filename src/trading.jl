@@ -18,7 +18,7 @@ need to evaluate the proposition and decide if they will accept via `choose_acce
 Then, finally, `from_player` will decide among the accepted players, `accepted_public`, with whome he will carry out
 the trade.
 """
-function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, from_player::PlayerType, from_goods, to_goods)
+function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, from_player::PlayerType, from_goods, to_goods::Vector{Symbol})
     to_goods_dict = Dict{Symbol,UInt8}()
     for g in to_goods
         if haskey(to_goods_dict,g)
@@ -30,7 +30,7 @@ function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, 
     propose_trade_goods(board, players, from_player, from_goods, to_goods, to_goods_dict)
 end
 
-function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, from_player::PlayerType, from_goods, to_goods, to_goods_dict::Dict{Symbol, UInt8})
+function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, from_player::PlayerType, from_goods::Vector{Symbol}, to_goods::Vector{Symbol}, to_goods_dict::Dict{Symbol, UInt8})
     accepted = Vector{Player}()
     accepted_public = Vector{PlayerPublicView}()
     from_player_public = PlayerPublicView(from_player.player)
@@ -57,8 +57,9 @@ function propose_trade_goods(board::Board, players::AbstractVector{PlayerType}, 
         @info "$(join([p.team for p in accepted_public], ",")) accept the trade"
     end
     to_player_team = choose_who_to_trade_with(board, from_player, accepted_public)
+    @info "chose to trade with $to_player_team"
     to_player = [p for p in accepted if p.team == to_player_team][1]
-    trade_goods(from_player.player, to_player, [from_goods...], [to_goods...])
+    trade_goods(from_player.player, to_player, from_goods, to_goods)
 end
 
 

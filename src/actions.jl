@@ -140,7 +140,9 @@ end
 function do_robber_move_discard(board, players::AbstractVector{PlayerType}, player::PlayerType)
     r_count = PlayerApi.count_cards(player.player)
     if r_count > 7
-        for i = 1:Int(floor(r_count / 2))
+        discard_amount = Int(floor(r_count / 2))
+        @info "$player has $r_count resources, so he must discard $discard_amount of them"
+        for i = 1:discard_amount
             resource = choose_one_resource_to_discard(board, PlayerPublicView.(players), player)
             PlayerApi.discard_cards!(player.player, resource)
             BoardApi.give_resource!(board, resource)

@@ -130,9 +130,30 @@ function generate_random_map(io::IO)
     resource_bag = shuffle!(vcat([repeat([lowercase(string(r)[1])], c) for (r,c) in RESOURCE_TO_COUNT]...))
     dicevalue_bag = shuffle!(vcat([repeat([r], c) for (r,c) in DICEVALUE_TO_COUNT]...))
 
+    # Force the Desert and the 7 to coincide
+    desert_index = -1
+    seven_index = -1
+    for (i,r) in enumerate(resource_bag)
+        if r == 'd'
+            desert_index = i
+        end
+        if dicevalue_bag[i] == 7
+            seven_index = i
+        end
+    end
+
+    if desert_index != seven_index
+        temp = resource_bag[seven_index]
+        resource_bag[seven_index] = resource_bag[desert_index]
+        resource_bag[desert_index] = temp
+    end
+
     for (l,r,d) in zip("ABCDEFGHIJKLMNOPQRS", resource_bag, dicevalue_bag)
         write(io, "$l,$d,$r\n")
     end
+
+
+
     
     ports = shuffle(1:9)[1:5]
     resources = ["p","s","g","w","b"]
@@ -140,14 +161,6 @@ function generate_random_map(io::IO)
         write(io, "$(string(p)),$r\n")
     end
 
-    #=
-3,p
-5,s
-6,g
-8,w
-9,b
-   =#
-   #close(io)
    return io
 end
 function generate_random_map()
