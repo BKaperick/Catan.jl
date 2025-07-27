@@ -110,7 +110,7 @@ end
 
 function steal_random_resource(from_player::HumanPlayer, to_player::HumanPlayer)
     stolen_good = choose_card_to_steal(from_player)
-    if stolen_good ~isnothing(stolen_good)
+    if ~isnothing(stolen_good)
         @info "$(to_player) stole something from $(from_player)"
     end
     return stolen_good

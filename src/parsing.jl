@@ -127,7 +127,7 @@ end
 function _parse_ints(io, descriptor, configs::Dict)
     human_response = input(io, descriptor, configs::Dict)
     asints = Tuple([tryparse(Int, x) for x in split(human_response, ' ')])
-    if all([x == nothing || x == nothing for x in asints])
+    if all([x === nothing || x === nothing for x in asints])
         return get_coord_from_human_tile_description(human_response)
     end
     return asints
@@ -153,7 +153,7 @@ function _parse_resources_str(string_of_resources)
     return Tuple([HUMAN_RESOURCE_TO_SYMBOL[uppercase(String(x))] for x in split(string_of_resources, ' ')])
 end
 
-get_tile_from_human_tile_description(desc) = Symbol(uppercase(desc))
+get_tile_from_human_tile_description(desc::Union{AbstractString, AbstractChar}) = Symbol(uppercase(desc))
 function get_coords_from_human_tile_description(desc...)
     coords = []
     for d in desc
@@ -203,7 +203,7 @@ function get_road_coords_from_human_tile_description(desc)
         end
     end
 end
-function get_coord_from_human_tile_description(desc::String)
+function get_coord_from_human_tile_description(desc::AbstractString)
     if length(desc) > 3
         return get_coords_from_human_tile_description(split(desc, " "))
     end
