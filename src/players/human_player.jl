@@ -6,15 +6,26 @@ function get_admissible_devcards(player::HumanPlayer)
 end
 
 function roll_dice(player::HumanPlayer)::Integer
-    Int8(parse_int(player.io, "Dice roll:", player.player.configs))
+    if get_player_config(player.player.configs, "USING_REAL_BOARD", player.player.team)
+        Int8(parse_int(player.io, "Dice roll:", player.player.configs))
+    else
+        value = Int8(rand(1:6) + rand(1:6))
+        @info "$(player) rolled a $value"
+        return value
+    end
 end
 
 function choose_one_resource_to_discard(board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer)::Symbol
     isempty(player.player.resources) && throw(ArgumentError("Player has no resources"))
+    if !get_player_config(player, "USING_REAL_BOARD")
+        print_player_dashboard(player)
+    end
     return parse_resources(player.io, "$(player) discards: ", player.player.configs)[1]
 end
 
-function choose_building_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple{Int8,Int8}}, building_type::Symbol, is_first_turn = false)::Tuple{Int8, Int8}
+
+function choose_building_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple{TInt, TInt}}, building_type::Symbol, is_first_turn = false)::Tuple{TInt, TInt} where {TInt <: Integer}
+    BoardApi.print_board(board)
     if building_type == :Settlement
         validation_check = BoardApi.is_valid_settlement_placement
     else
@@ -26,7 +37,8 @@ function choose_building_location(board::Board, players::AbstractVector{PlayerPu
     end
     return coord
 end
-function choose_road_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple}, do_pay_cost::Bool = true)::Vector{Tuple{Int8,Int8}}
+
+function choose_road_location(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}}, do_pay_cost = true)::Union{Nothing,Tuple{Tuple{TInt, TInt}, Tuple{TInt, TInt}}} where {TInt <: Integer}
     road_coord1 = nothing
     road_coord2 = nothing
     road_coords = Vector{Tuple{Int,Int}}()
@@ -42,10 +54,11 @@ function choose_road_location(board::Board, players::AbstractVector{PlayerPublic
         road_coord2 = road_coords[2]
     end
     @info road_coords
-    return road_coords
+    return Tuple(road_coords)
 end
 
-function choose_place_robber(board::Board, players::AbstractVector{PlayerType}, player::HumanPlayer, candidates::Vector{Symbol})
+function choose_place_robber(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, candidates::Vector{Symbol})::Symbol
+    BoardApi.print_board(board)
     parse_tile(player.io, "$(player) places the Robber:", board.configs)
 end
 
@@ -65,34 +78,41 @@ function choose_robber_victim(board, player::HumanPlayer, potential_victims::Pla
     return [p for p in potential_victims if p.team == team][1]
 end
 function choose_card_to_steal(player::HumanPlayer)::Symbol
-    parse_resources(player.io, "$(player) lost his:", player.player.configs)[1]
+    if get_player_config(player, "USING_REAL_BOARD")
+        parse_resources(player.io, "$(player) lost his:", player.player.configs)[1]
+    else
+        unsafe_random_sample_one_resource(player.player.resources)
+    end
 end
 
 function choose_next_action(board::Board, players::AbstractVector{PlayerPublicView}, player::HumanPlayer, actions::Set{PreAction})::ChosenAction
+    BoardApi.print_board(board)
+    print_player_dashboard(player)
+    
     header = "What does $(player) do next?\n"
     full_options = string(header, [ACTION_TO_DESCRIPTION[a.name] for a in actions]..., "\n[E]nd turn")
     action_and_args = parse_action(player.io, full_options, board.configs)
-    if action_and_args == :EndTurn
-        return Returns(nothing)
-    end
-    @warn keys(PLAYER_ACTIONS)
+
+    @debug keys(PLAYER_ACTIONS)
     #func = ACTIONS_DICTIONARY[action_and_args[1]]
     return ChosenAction(action_and_args[1], action_and_args[2:end]...)
     #return (game, b, p) -> func(game, b, p, action_and_args[2:end]...)
 end
 
-function choose_steal_random_resource(from_player, to_player)
+function steal_random_resource(from_player, to_player)
     stolen_good = choose_card_to_steal(from_player)
-    input(stdin, "Press Enter when $(to_player) is ready to see the message", from_player.configs)
+    input(stdin, "Press Enter when $((from_player isa HumanPlayer) ? from_player : to_player) is ready to see the message", from_player.player.configs)
     @info "$(to_player) stole $stolen_good from $(from_player)"
     input(stdin, "Press Enter again when you are ready to hide the message", from_player.player.configs)
     Base.run(`clear`)
     return stolen_good
 end
 
-function choose_steal_random_resource(from_player::HumanPlayer, to_player::HumanPlayer)
+function steal_random_resource(from_player::HumanPlayer, to_player::HumanPlayer)
     stolen_good = choose_card_to_steal(from_player)
-    @info "$(to_player) stole something from $(from_player)"
+    if ~isnothing(stolen_good)
+        @info "$(to_player) stole something from $(from_player)"
+    end
     return stolen_good
 end
 
@@ -101,5 +121,8 @@ function choose_who_to_trade_with(board, player::HumanPlayer, players)
 end
 
 function choose_accept_trade(board, player::HumanPlayer, from_player::PlayerPublicView, from_goods, to_goods)
+    if ~get_player_config(player, "USING_REAL_BOARD")
+        print_player_dashboard(player)
+    end
     parse_yesno(player.io, "Does $(player) want to recieve $from_goods and give $to_goods to $(from_player) ?", board.configs)
 end

@@ -27,3 +27,4 @@ ROAD = 14
 RESOURCE = 25
 
 [PlayerSettings]
+USING_REAL_BOARD = false

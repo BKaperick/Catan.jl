@@ -47,7 +47,7 @@ parse_action(io, desc, configs::Dict)          = parse_generic(io, desc, configs
 
 _parse_symbol(desc, configs::Dict) = _parse_symbol(stdin, desc, configs)
 function _parse_symbol(io, desc, configs::Dict)
-    return Symbol(titlecase(desc))
+    return Symbol(input(io, desc, configs))
 end
 
 function _parse_tile(io, desc, configs::Dict)
@@ -67,9 +67,11 @@ end
 function _parse_action(io, descriptor, configs::Dict)::Tuple
     while true
         human_response = lowercase(input(io, descriptor, configs::Dict))
+        #=
         if (human_response[1] == 'e')
-            return (:EndTurn)
+            return (:DoNothing,)
         end
+        =#
         out_str = split(human_response, " ")
         fname = out_str[1]
         
@@ -83,15 +85,20 @@ function _parse_action(io, descriptor, configs::Dict)::Tuple
             human_coords = out_str[2]
             @info human_coords
             @info [get_road_coords_from_human_tile_description(human_coords)]
-            return (func, [get_road_coords_from_human_tile_description(human_coords)...])
+            return (func, get_road_coords_from_human_tile_description(human_coords)..., true)
         elseif fname == "pt" # pt 2 w w g g
             amount_are_mine = parse(Int, out_str[2])
             goods = join(out_str[3:end], " ")
-            return (func, [], amount_are_mine, [_parse_resources_str(goods)...])
+            parsed_goods = [_parse_resources_str(goods)...]
+            from_goods = parsed_goods[1:amount_are_mine]
+            to_goods = parsed_goods[(amount_are_mine+1):end]
+            return (func, from_goods, to_goods)
         elseif fname == "bd"
             return (func, [])
         elseif fname == "pd"
             return (func, [], 0, nothing, _parse_symbol(out_str[2], configs))
+        else
+            return (func, [])
         end
     end
 end
@@ -120,7 +127,7 @@ end
 function _parse_ints(io, descriptor, configs::Dict)
     human_response = input(io, descriptor, configs::Dict)
     asints = Tuple([tryparse(Int, x) for x in split(human_response, ' ')])
-    if all([x == nothing || x == nothing for x in asints])
+    if all([x === nothing || x === nothing for x in asints])
         return get_coord_from_human_tile_description(human_response)
     end
     return asints
@@ -146,7 +153,7 @@ function _parse_resources_str(string_of_resources)
     return Tuple([HUMAN_RESOURCE_TO_SYMBOL[uppercase(String(x))] for x in split(string_of_resources, ' ')])
 end
 
-get_tile_from_human_tile_description(desc) = Symbol(uppercase(desc))
+get_tile_from_human_tile_description(desc::Union{AbstractString, AbstractChar}) = Symbol(uppercase(desc))
 function get_coords_from_human_tile_description(desc...)
     coords = []
     for d in desc
@@ -196,7 +203,7 @@ function get_road_coords_from_human_tile_description(desc)
         end
     end
 end
-function get_coord_from_human_tile_description(desc::String)
+function get_coord_from_human_tile_description(desc::AbstractString)
     if length(desc) > 3
         return get_coords_from_human_tile_description(split(desc, " "))
     end

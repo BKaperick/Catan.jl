@@ -98,14 +98,32 @@ function Base.show(io::IO, p::PlayerType)
     end
 end
 
+function print_player_dashboard(p::PlayerType)
+    @info "Player $p"
+    for (r,c) in p.player.resources
+        if c > 0
+            @info "$r => $c"
+        end
+    end
+    for (r,c) in p.player.devcards
+        if c > 0
+            @info "$r => $c"
+        end
+    end
+end
+
+
 HumanPlayer(team::Symbol, io::IO, configs::Dict) = HumanPlayer(Player(team, configs), io)
 HumanPlayer(team::Symbol, configs::Dict) = HumanPlayer(team, stdin, configs)
 
 DefaultRobotPlayer(team::Symbol, configs::Dict) = DefaultRobotPlayer(Player(team, configs))
 
-
 function Base.copy(player::DefaultRobotPlayer)
     return DefaultRobotPlayer(copy(player.player))
+end
+
+function Base.copy(player::HumanPlayer)
+    return HumanPlayer(copy(player.player), player.io)
 end
 
 function Base.copy(player::Player)
