@@ -87,7 +87,7 @@ function buy_devcard(player::Player, card::Symbol)
 end
 
 function add_devcard!(player::Player, devcard::Symbol)
-    log_action(player.configs, ":$(player) ad", devcard)
+    log_action(player.configs, player.team, "ad", devcard)
     _add_devcard!(player, devcard)
 end
 function _add_devcard!(player::Player, devcard::Symbol)
@@ -100,7 +100,7 @@ function _add_devcard!(player::Player, devcard::Symbol)
 end
     
 function play_devcard!(player::Player, devcard::Symbol)
-    log_action(player.configs, ":$(player) pd", devcard)
+    log_action(player.configs, player.team, "pd", devcard)
     _play_devcard!(player, devcard)
 end
 
@@ -153,7 +153,7 @@ function has_enough_resources(player::Player, resources::Dict{Symbol,TInt})::Boo
 end
 
 function discard_cards!(player, resources...)
-    log_action(player.configs, ":$(player) dc", resources...)
+    log_action(player.configs, player.team, "dc", resources...)
     _discard_cards!(player, resources...)
 end
 function _discard_cards!(player, resources...)
@@ -169,7 +169,7 @@ function count_cards(player::Player)
 end
 
 function add_port!(player::Player, resource::Symbol)
-    log_action(player.configs, ":$(player) ap", resource)
+    log_action(player.configs, player.team, "ap", resource)
     _add_port!(player, resource)
 end
 function _add_port!(player::Player, resource::Symbol)
@@ -188,7 +188,7 @@ end
 
 function give_resource!(player::Player, resource::Symbol)
     if resource in RESOURCES
-        log_action(player.configs, ":$(player) gr", resource)
+        log_action(player.configs, player.team, "gr", resource)
         _give_resource!(player, resource)
     else
         #@warn "giving $(player) $resource"
@@ -202,7 +202,7 @@ function _give_resource!(player::Player, resource::Symbol)
     end
 end
 function take_resource!(player::Player, resource::Symbol)
-    log_action(player.configs, ":$(player) tr", resource)
+    log_action(player.configs, player.team, "tr", resource)
     _take_resource!(player, resource)
 end
 function _take_resource!(player::Player, resource::Symbol)

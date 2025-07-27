@@ -169,22 +169,31 @@ function generate_random_map()
     close(io)
     return map_str
 end
-#function generate_random_map_string(fname::String)
-#end
 
+function stringify_arg(arg)::AbstractString
+    arg_str = ""
+    if typeof(arg) == Symbol
+        arg_str = ":$arg"
+    elseif typeof(arg) <: AbstractString
+        arg_strs = "\"$arg\""
+    else
+        arg_str = replace(string(arg), " " => "")
+    end
+    return arg_str
+end
 
-function serialize_action(fname::String, args...)
+function serialize_action(strategy::JsonSerialize, fname::String, args...)
     arg_strs = []
     for arg in args
-        if typeof(arg) == Symbol
-            push!(arg_strs, ":$arg")
-        elseif typeof(arg) <: AbstractString
-            push!(arg_strs, "\"$arg\"")
-        elseif typeof(arg) == Board
-            #push!(arg_strs, "board")
-        else
-            push!(arg_strs, replace(string(arg), " " => ""))
-        end
+        push!(arg_strs, stringify_arg(arg))
+    end
+    string("$fname ", join(arg_strs, " "))
+end
+
+function serialize_action(strat::TextSerialize, fname::String, args...)
+    arg_strs = []
+    for arg in args
+        push!(arg_strs, stringify_arg(arg))
     end
     string("$fname ", join(arg_strs, " "))
 end
@@ -196,15 +205,43 @@ Logs the action to the SAVE_FILE if `SAVE_GAME_TO_FILE` is true.
 Otherwise, it is a no-op.
 """
 function log_action(configs::Dict, fname::String, args...)::Nothing
-    if configs["SAVE_GAME_TO_FILE"]
-        serialized = serialize_action(fname, args...)
+    if ~configs["SAVE_GAME_TO_FILE"]
+        return
+    end
+    if configs["SERIALIZATION_STRATEGY"] == "JSON"
+        log_action_json(configs["SAVE_FILE_IO"], fname, args)
+    else
+        log_action_text(configs["SAVE_FILE_IO"], fname, args)
+    end
+    return
+end
+
+function log_action(configs::Dict, api_type::Symbol, function_key::String, args...)::Nothing
+    api_str = "$api_type"
+    if api_type == :Board || api_type == :Game
+        api_str = lowercase(string(api_type))
+    end
+    
+    fname = "$api_str $function_key"
+    log_action(configs, fname, args...)
+end
+
+
+function log_action_text(file_io::IO, fname::String, args)::Nothing
+        serialized = serialize_action(textSerialize, fname, args...)
         outstring = string(serialized, "\n")
         @debug "outstring = $outstring"
-        write(configs["SAVE_FILE_IO"], outstring)
+        write(file_io, outstring)
         return
-        #return serialized
-    end
-    #return
+end
+
+function log_action_json(file_io::IO, fname::String, args)::Nothing
+    msg = Dict()
+    api_name, func_name = split(fname, " ")
+    msg["type"] = api_name
+    msg["action"] = func_name
+    msg["args"] = [stringify_arg(a) for a in args]
+    JSON.print(file_io, msg)
 end
 
 function read_action()

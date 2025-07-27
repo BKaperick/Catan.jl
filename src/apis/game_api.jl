@@ -2,7 +2,7 @@ module GameApi
 using ..Catan: Game, roll_dice, log_action, has_any_elements, random_sample_resources, unsafe_random_sample_one_resource
 
 function start_turn(game::Game)::Nothing
-    log_action(game.configs, "game st")
+    log_action(game.configs, :Game, "st")
     _start_turn(game)
 end
 function _start_turn(game::Game)
@@ -29,7 +29,7 @@ function do_set_turn_order(game)
 end
 
 function finish_player_turn(game::Game, team)
-    log_action(game.configs, "game fp :$team")
+    log_action(game.configs, :Game, "fp", team)
     _finish_player_turn(game, team)
 end
 function _finish_player_turn(game, team)
@@ -37,11 +37,11 @@ function _finish_player_turn(game, team)
 end
 
 function set_dice_true(game::Game)
-    log_action(game.configs, "game dt")
+    log_action(game.configs, :Game, "dt")
     _reset_dice_true(game)
 end
 function set_dice_false(game::Game)
-    log_action(game.configs, "game df")
+    log_action(game.configs, :Game, "df")
     _reset_dice_false(game)
 end
 _reset_dice_true(game::Game) = _reset_dice(game, true)
@@ -50,7 +50,7 @@ function _reset_dice(game::Game, choice::Bool)
     game.rolled_dice_already = choice
 end
 function finish_turn(game::Game)
-    log_action(game.configs, "game ft")
+    log_action(game.configs, :Game, "ft")
     _finish_turn(game)
 end
 function _finish_turn(game)
@@ -62,7 +62,7 @@ end
 function draw_devcard(game::Game)
     card = unsafe_random_sample_one_resource(game.devcards)
     #card = random_sample_resources(game.devcards, 1)[1]
-    log_action(game.configs, "game dd :$card")
+    log_action(game.configs, :Game, "dd", card)
     _draw_devcard(game, card)
 end
 function _draw_devcard(game::Game, card::Symbol)
@@ -71,7 +71,7 @@ function _draw_devcard(game::Game, card::Symbol)
 end
 
 function set_starting_player(game, index)
-    log_action(game.configs, "game ss", index)
+    log_action(game.configs, :Game, "ss", index)
     _set_starting_player(game, index)
 end
 function _set_starting_player(game::Game, index)

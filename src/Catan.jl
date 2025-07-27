@@ -1,5 +1,6 @@
 module Catan
 
+using JSON
 using DocStringExtensions
 using Logging
 using Random
