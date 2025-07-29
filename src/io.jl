@@ -243,6 +243,7 @@ function log_action_json(file_io::IO, fname::String, args)::Nothing
     msg["args"] = [stringify_arg(a) for a in args]
     @info msg
     JSON.print(file_io, msg)
+    println(file_io)
 end
 
 function read_action()

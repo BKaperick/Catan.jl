@@ -95,8 +95,8 @@ end
 
 function do_rest_of_game!(game, board)
     while ~someone_has_won(game, board, game.players)
-        @info "Starting game $(game.unique_id) turn $(game.turn_num)"
         GameApi.start_turn(game)
+        @info "Starting game $(game.unique_id) turn $(game.turn_num)"
 
         # We can't just use game.players since we need to handle re-loading from a game paused mid-turn
         for player in GameApi.get_players_to_play(game)

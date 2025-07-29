@@ -236,7 +236,7 @@ function get_legal_actions(game, board, player::Player)::Set{PreAction}
     admissible_roads = BoardApi.get_admissible_road_locations(board, player.team, is_first_turn)
     resource_check = is_first_turn || PlayerApi.has_enough_resources(player, COSTS[:Road])
     if resource_check && length(admissible_roads) > 0
-        push!(actions, PreAction(:ConstructRoad, Vector{Tuple}([(r...,is_first_turn) for r in admissible_roads])))
+        push!(actions, PreAction(:ConstructRoad, Vector{Tuple}([(r...,!is_first_turn) for r in admissible_roads])))
     end
 
     if PlayerApi.has_enough_resources(player, COSTS[:DevelopmentCard]) && GameApi.can_draw_devcard(game)

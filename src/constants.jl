@@ -165,7 +165,7 @@ const ACTION_TO_DESCRIPTION = Dict(
     :ConstructRoad => "[br] Build road",
     :BuyDevCard => "[bd] Buy development card",
     :PlayDevCard => "[pd] Play development card",
-    :DoNothing => ""
+    :DoNothing => "[E]nd turn"
    )
 
 
