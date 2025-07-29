@@ -136,14 +136,3 @@ end
 
 PreAction(name::Symbol) = PreAction(name, Vector{Tuple{Any}}())
 PreAction(name::Symbol, arg::Vector{Symbol}) = PreAction(name, [(s,) for s in arg])
-
-abstract type SerializationStrategy
-end
-
-struct JsonSerialize <: SerializationStrategy
-end
-struct TextSerialize <: SerializationStrategy
-end
-
-const textSerialize = TextSerialize()
-const jsonSerialize = TextSerialize()
