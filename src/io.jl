@@ -170,27 +170,11 @@ function generate_random_map()
     return map_str
 end
 
-function stringify_arg(arg)::AbstractString
-    arg_str = ""
-    if typeof(arg) == Symbol
-        arg_str = ":$arg"
-    elseif typeof(arg) <: AbstractString
-        arg_strs = "\"$arg\""
-    else
-        arg_str = replace(string(arg), " " => "")
-    end
-    return arg_str
-end
+stringify_arg(arg::Symbol)::AbstractString = ":$arg"
+stringify_arg(arg::AbstractString)::AbstractString = "\"$arg\""
+stringify_arg(arg) = replace(string(arg), " " => "")
 
-function serialize_action(strategy::JsonSerialize, fname::String, args...)
-    arg_strs = []
-    for arg in args
-        push!(arg_strs, stringify_arg(arg))
-    end
-    string("$fname ", join(arg_strs, " "))
-end
-
-function serialize_action(strat::TextSerialize, fname::String, args...)
+function serialize_action(fname::String, args...)
     arg_strs = []
     for arg in args
         push!(arg_strs, stringify_arg(arg))
@@ -228,7 +212,7 @@ end
 
 
 function log_action_text(file_io::IO, fname::String, args)::Nothing
-        serialized = serialize_action(textSerialize, fname, args...)
+        serialized = serialize_action(fname, args...)
         outstring = string(serialized, "\n")
         @debug "outstring = $outstring"
         write(file_io, outstring)
@@ -240,7 +224,7 @@ function log_action_json(file_io::IO, fname::String, args)::Nothing
     api_name, func_name = split(fname, " ")
     msg["type"] = api_name
     msg["action"] = func_name
-    msg["args"] = [stringify_arg(a) for a in args]
+    msg["args"] = args
     @info msg
     JSON.print(file_io, msg)
     println(file_io)
@@ -249,7 +233,32 @@ end
 function read_action()
 end
 
-function execute_api_call(game::Game, board::Board, line::String)
+function execute_api_call_json(game::Game, board::Board, line::String)
+    # TODO initialize this globally somewhere?  Store in board?
+    team_to_player = Dict([p.player.team => p.player for p in game.players])
+    json = JSON.parse(line)
+    func_key = json["action"]
+    
+    api_call = API_DICTIONARY[func_key]
+    args = json["args"]
+
+    execute_api_call(game, board, api_call, json["type"], [coerce_json_type(a) for a in args]...)
+end
+
+function coerce_json_type(arg)
+    if arg isa AbstractArray
+        return Tuple(arg)::Tuple{Integer, Integer}
+    elseif arg isa Integer
+        return Int8(arg)
+    elseif arg isa String
+        return Symbol(arg)
+    else
+        arg
+    end
+
+end
+
+function execute_api_call_text(game::Game, board::Board, line::String)
     # TODO initialize this globally somewhere?  Store in board?
     team_to_player = Dict([p.player.team => p.player for p in game.players])
     @debug "line = $line"
@@ -259,29 +268,42 @@ function execute_api_call(game::Game, board::Board, line::String)
 
     other_args = [eval(Meta.parse(a)) for a in values[3:end]]
     filter!(x -> x !== nothing, other_args)
-    if values[1] == "board"
+
+    execute_api_call(game, board, api_call, values[1], other_args...)
+end
+
+function execute_api_call(game::Game, board::Board, api_call::Function, api_type::String, other_args...)
+    # TODO initialize this globally somewhere?  Store in board?
+    team_to_player = Dict([p.player.team => p.player for p in game.players])
+    if api_type == "board"
         @debug "API: $api_call(board, $(other_args...))"
         api_call(board, other_args...)
-    elseif values[1] == "game"
+    elseif api_type == "game"
         if length(other_args) > 0
-            @debug "API: $api_call(game, $(other_args...))"
+            @info "API: $api_call(game, $(other_args...))"
             api_call(game, other_args...)
         else
             @debug "API: $api_call(game)"
             api_call(game)
         end
     else
-        @debug "values[1] = $(values[1])"
-        player = team_to_player[eval(Meta.parse(values[1]))]
+        @debug "values[1] = $api_type"
+        player = team_to_player[Symbol(api_type)]
         @debug "API: $api_call(player $(values[1]), $(other_args...))" 
         api_call(player, other_args...)
     end
 end
+
 function load_gamestate!(game, board)
     file = game.configs["SAVE_FILE"]
-    @debug "Loading game from file $file"
+    @info "Loading game from file $file"
     for line in readlines(file)
-        execute_api_call(game, board, line)
+        @info line
+        if game.configs["SERIALIZATION_STRATEGY"] == "JSON"
+            execute_api_call_json(game, board, line)
+        else
+            execute_api_call_text(game, board, line)
+        end
     end
     if game.configs["PRINT_BOARD"]
         BoardApi.print_board(board)
