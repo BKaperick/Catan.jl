@@ -127,7 +127,7 @@ function get_road_locations(board, team::Symbol)::Vector{Tuple{Int8, Int8}}
 end
 
 function build_city!(board::Board, team::Symbol, coord::Tuple{Integer, Integer})::Building
-    log_action(board.configs, "board bc", team, coord)
+    log_action(board.configs, :Board, "bc", team, coord)
     @info "$team builds city at intersection of $(join(COORD_TO_TILES[coord], ","))"
     _build_city!(board, team, coord)
 end
@@ -150,7 +150,7 @@ function _build_city!(board, team, coord::Tuple{Integer, Integer})::Building
 end
 
 function build_settlement!(board::Board, team::Symbol, coord::Tuple{Integer, Integer})::Building
-    log_action(board.configs, "board bs", team, coord)
+    log_action(board.configs, :Board, "bs", team, coord)
     @info "$team builds settlement at intersection of $(join(COORD_TO_TILES[coord], ","))"
     _build_settlement!(board, team, coord)
 end
@@ -172,7 +172,7 @@ function _build_settlement!(board, team, coord::Tuple{Integer, Integer})::Buildi
 end
 
 function build_road!(board::Board, team::Symbol, coord1::Tuple{Integer, Integer}, coord2::Tuple{Integer, Integer})::Road
-    log_action(board.configs, "board br", team, coord1, coord2)
+    log_action(board.configs, :Board, "br", team, coord1, coord2)
     @info "$team builds road at $(join(intersect(COORD_TO_TILES[coord1],COORD_TO_TILES[coord2]), "-"))"
     _build_road!(board, team, coord1, coord2)
 end
@@ -318,7 +318,7 @@ function recursive_roads_skip_coord(roads_seen::Set{Road}, current::Road, root_c
 end
 
 function move_robber!(board::Board, tile)
-    log_action(board.configs, "board mr", tile)
+    log_action(board.configs, :Board, "mr", tile)
     _move_robber!(board, tile)
 end
 function _move_robber!(board, tile)
@@ -492,7 +492,7 @@ end
 function assign_largest_army!(board::Board, team::Union{Symbol, Nothing})
     # Noop if team already has largest army
     if board.largest_army != team && team !== nothing
-        log_action(board.configs, "board la", team)
+        log_action(board.configs, :Board, "la", team)
         _assign_largest_army!(board, team)
     end
 end
@@ -531,7 +531,7 @@ function can_draw_resource(board::Board, resource::Symbol)
     return board.resources[resource] > 0
 end
 function draw_resource!(board::Board, resource::Symbol)
-    log_action(board.configs, "board dr", resource)
+    log_action(board.configs, :Board, "dr", resource)
     _draw_resource!(board, resource)
 end
 function _draw_resource!(board::Board, resource::Symbol)
@@ -539,7 +539,7 @@ function _draw_resource!(board::Board, resource::Symbol)
     return resource 
 end
 function give_resource!(board::Board, resource::Symbol)
-    log_action(board.configs, "board pr", resource)
+    log_action(board.configs, :Board, "pr", resource)
     _give_resource!(board, resource)
 end
 function _give_resource!(board::Board, resource::Symbol)
