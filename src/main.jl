@@ -58,7 +58,7 @@ function run(configs::Dict)
     return run(players, configs)
 end
 
-function run(players, configs)
+function run(players::AbstractVector{PlayerType}, configs)
     game = Game(players, configs)
 
     run(game)

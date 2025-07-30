@@ -91,12 +91,7 @@ function choose_next_action(board::Board, players::AbstractVector{PlayerPublicVi
     
     header = "What does $(player) do next?\n"
     full_options = string(header, join([ACTION_TO_DESCRIPTION[a.name] for a in actions], "\n"), "\n[quit] save and quit game")
-    action_and_args = parse_action(player.io, full_options, board.configs)
-
-    @debug keys(PLAYER_ACTIONS)
-    #func = ACTIONS_DICTIONARY[action_and_args[1]]
-    return ChosenAction(action_and_args[1], action_and_args[2:end]...)
-    #return (game, b, p) -> func(game, b, p, action_and_args[2:end]...)
+    return parse_action(player.io, full_options, board.configs)
 end
 
 function steal_random_resource(from_player, to_player)

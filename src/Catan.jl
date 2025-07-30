@@ -46,8 +46,7 @@ GameRunner,
 PreAction,
 get_known_players,
 get_player_config,
-set_player_config,
-PLAYER_ACTIONS
+set_player_config
 
 # Customizable Player Interface
 export 

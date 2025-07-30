@@ -23,7 +23,6 @@ using Catan:
     do_monopoly_action,
     harvest_resources,
     roll_dice,
-    PLAYER_ACTIONS,
     setup_players,
     setup_and_do_robot_game,
     test_automated_game,
@@ -51,7 +50,6 @@ using Catan:
     do_monopoly_action,
     harvest_resources,
     roll_dice,
-    PLAYER_ACTIONS,
     setup_players,
     setup_and_do_robot_game,
     test_automated_game,
@@ -89,10 +87,6 @@ end
     max_num = 15
     println("length(JET.get_reports(rep)) = $(length(reports)) / $max_num")
     @test length(reports) <= max_num
-end
-
-@testitem "actions" setup=[global_test_setup] begin
-    @test length(keys(PLAYER_ACTIONS)) == 6
 end
 
 @testitem "deepcopy" setup=[global_test_setup] begin
@@ -522,7 +516,7 @@ end
     board = read_map(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
-    game = Game([player1, player2], configs)
+    game = Game(Vector{PlayerType}([player1, player2]), configs)
     @test all([v == 4 for v in values(player1.player.ports)])
     @test length(keys(player1.player.ports)) == 5
 

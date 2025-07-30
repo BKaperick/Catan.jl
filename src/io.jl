@@ -234,9 +234,7 @@ function read_action()
 end
 
 function execute_api_call_json(game::Game, board::Board, line::String)
-    # TODO initialize this globally somewhere?  Store in board?
-    team_to_player = Dict([p.player.team => p.player for p in game.players])
-    json = JSON.parse(line)
+    json = JSON.parse(line)::Dict
     func_key = json["action"]
     
     api_call = API_DICTIONARY[func_key]
@@ -259,8 +257,6 @@ function coerce_json_type(arg)
 end
 
 function execute_api_call_text(game::Game, board::Board, line::String)
-    # TODO initialize this globally somewhere?  Store in board?
-    team_to_player = Dict([p.player.team => p.player for p in game.players])
     @debug "line = $line"
     values = split(line, " ")
     func_key = values[2]
@@ -272,7 +268,7 @@ function execute_api_call_text(game::Game, board::Board, line::String)
     execute_api_call(game, board, api_call, values[1], other_args...)
 end
 
-function execute_api_call(game::Game, board::Board, api_call::Function, api_type::String, other_args...)
+function execute_api_call(game::Game, board::Board, api_call::Function, api_type::AbstractString, other_args...)
     # TODO initialize this globally somewhere?  Store in board?
     team_to_player = Dict([p.player.team => p.player for p in game.players])
     if api_type == "board"
