@@ -134,7 +134,7 @@ reset_savefile!(configs::Dict) = reset_savefile!(configs, joinpath(@__DIR__, "..
 function reset_savefile!(configs::Dict, path)
     configs["SAVE_FILE"] = path
 
-    if configs["SAVE_GAME_TO_FILE"]
+    if configs["SAVE_GAME_TO_FILE"] && ~isfile(path)
         io = open(path, "w"); write(io,""); close(io)
     end
     configs["SAVE_FILE_IO"] = open(path, "a")
@@ -165,7 +165,7 @@ const ACTION_TO_DESCRIPTION = Dict(
     :ConstructRoad => "[br] Build road",
     :BuyDevCard => "[bd] Buy development card",
     :PlayDevCard => "[pd] Play development card",
-    :DoNothing => ""
+    :DoNothing => "[E]nd turn"
    )
 
 

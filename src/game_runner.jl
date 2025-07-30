@@ -1,5 +1,5 @@
 module GameRunner
-using ..Catan: Game, Board, PlayerType, Player, PlayerPublicView, PreAction, ChosenAction,
+using ..Catan: Game, Board, PlayerType, HumanPlayer, Player, PlayerPublicView, PreAction, ChosenAction,
                read_map, load_gamestate!, initialize_player,
                do_first_turn_building!,
                decide_and_roll_dice!,choose_next_action, do_post_game_produce!,
@@ -12,6 +12,24 @@ using ..Catan: Game, Board, PlayerType, Player, PlayerPublicView, PreAction, Cho
 using ..Catan.BoardApi
 using ..Catan.PlayerApi
 using ..Catan.GameApi
+
+macro safeact(ex)
+    quote
+        try
+            $(esc(ex))
+        catch e
+            if e isa InterruptException
+                throw(e)
+            else
+                throw(e)
+                # @warn "Action failed: $e"
+            end
+        end
+    end
+end
+
+get_next_action_func(player::HumanPlayer, action_name::Symbol)::Function = @safeact ACTIONS_DICTIONARY[action_name]
+get_next_action_func(player::PlayerType, action_name::Symbol)::Function = ACTIONS_DICTIONARY[action_name]
 
 function initialize_and_do_game!(game::Game)::Tuple{Board, Union{PlayerType, Nothing}}
     board = initialize_game!(game)
@@ -95,8 +113,8 @@ end
 
 function do_rest_of_game!(game, board)
     while ~someone_has_won(game, board, game.players)
-        @info "Starting game $(game.unique_id) turn $(game.turn_num)"
         GameApi.start_turn(game)
+        @info "Starting game $(game.unique_id) turn $(game.turn_num)"
 
         # We can't just use game.players since we need to handle re-loading from a game paused mid-turn
         for player in GameApi.get_players_to_play(game)
@@ -158,7 +176,8 @@ function do_action_from_legal_actions(game, board, player, legal_actions::Set{Pr
         do_post_action_step(board, player)
         return false
     end
-    next_action_func! = ACTIONS_DICTIONARY[next_action.name]::Function
+    next_action_func! = get_next_action_func(player, next_action.name)
+
     #TODO Wrapped in one too many tuples
     @debug next_action
     next_action_func!(game, board, player, next_action.args...)

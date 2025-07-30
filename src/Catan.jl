@@ -1,5 +1,6 @@
 module Catan
 
+using JSON
 using DocStringExtensions
 using Logging
 using Random
@@ -26,7 +27,6 @@ import .BoardApi
 include("apis/game_api.jl")
 import .GameApi
 
-include("apis/human_action_interface.jl")
 include("trading.jl")
 
 include("main.jl")
@@ -45,8 +45,7 @@ GameRunner,
 PreAction,
 get_known_players,
 get_player_config,
-set_player_config,
-PLAYER_ACTIONS
+set_player_config
 
 # Customizable Player Interface
 export 

@@ -2,6 +2,9 @@ global counter = 1
 global base_dir = @__DIR__
 using Test
 
+
+Game(typed_players::Vector{T}, configs::Dict) where T <: DefaultRobotPlayer = Game(Vector{PlayerType}(typed_players), configs)
+
 function reset_savefile_with_timestamp(name, configs)
     configs["SAVE_GAME_TO_FILE"] = true
     ~ispath("data") && mkdir("data")

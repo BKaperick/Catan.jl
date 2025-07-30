@@ -99,15 +99,15 @@ function Base.show(io::IO, p::PlayerType)
 end
 
 function print_player_dashboard(p::PlayerType)
-    @info "Player $p"
+    @info "Player $p:"
     for (r,c) in p.player.resources
         if c > 0
-            @info "$r => $c"
+            @info "\t$r => $c"
         end
     end
     for (r,c) in p.player.devcards
         if c > 0
-            @info "$r => $c"
+            @info "\t$r => $c"
         end
     end
 end

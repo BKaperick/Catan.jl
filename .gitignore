@@ -10,3 +10,4 @@ data/_temp_map_file.csv
 docs/build/
 .vscode/
 *.mem
+*.txt

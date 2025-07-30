@@ -7,6 +7,7 @@ LOAD_MAP = ""
 PRINT_BOARD = false
 MAX_TURNS = 1000
 ASYNC = false
+SERIALIZATION_STRATEGY = "JSON"
 
 [LogSettings]
 LOG_OUTPUT = "stderr"

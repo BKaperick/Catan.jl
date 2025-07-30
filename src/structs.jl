@@ -11,8 +11,8 @@ mutable struct Game
     configs::Dict{String, Any}
 end
 
-Game(players) = Game(SVector{length(players)}(players), Dict{String, Any}())
-function Game(players::AbstractVector, configs::Dict)
+Game(players::AbstractVector{PlayerType}) = Game(SVector{length(players)}(players), Dict{String, Any}())
+function Game(players::AbstractVector{PlayerType}, configs::Dict)
     # TODO, fails with ERROR: Tuple field type cannot be Union{} in broadcast, so we have to do it as list comp.
     # Seems weird, maybe was working before 1.10
     # TODO test now that deepcopy changed to copy
@@ -136,5 +136,3 @@ end
 
 PreAction(name::Symbol) = PreAction(name, Vector{Tuple{Any}}())
 PreAction(name::Symbol, arg::Vector{Symbol}) = PreAction(name, [(s,) for s in arg])
-#PreAction(name::Symbol, arg::Vector{Tuple}) = PreAction(name, [(s,) for s in arg])
-#PreAction(name::Symbol, admissible_args::Set) = PreAction(name, collect(admissible_args))

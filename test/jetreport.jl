@@ -1,4 +1,5 @@
 using Revise
 using JET
 using Catan
-@show report_package(Catan) ignored_modules=(AnyFrameModule(Base),)
+using JSON
+@show report_package(Catan) ignored_modules=(AnyFrameModule(Base),AnyFrameModule(JSON))

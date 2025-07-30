@@ -50,6 +50,10 @@ function _parse_symbol(io, desc, configs::Dict)
     return Symbol(input(io, desc, configs))
 end
 
+function _parse_devcard_symbol(desc::AbstractString, configs::Dict)
+    return HUMAN_DEVCARD_TO_SYMBOL[uppercase(string(desc[1]))]
+end
+
 function _parse_tile(io, desc, configs::Dict)
     tile = Symbol(titlecase(input(io, desc, configs::Dict)))
     if haskey(TILE_TO_COORDS, tile)
@@ -64,7 +68,7 @@ function _parse_yesno(io, desc, configs::Dict)
     return human_response[1] == 'y'
 end
 
-function _parse_action(io, descriptor, configs::Dict)::Tuple
+function _parse_action(io, descriptor, configs::Dict)::ChosenAction
     while true
         human_response = lowercase(input(io, descriptor, configs::Dict))
         #=
@@ -80,25 +84,25 @@ function _parse_action(io, descriptor, configs::Dict)::Tuple
         if fname == "bs" || fname == "bc"
             human_coords = out_str[2]
             @info human_coords
-            return (func, [get_coord_from_human_tile_description(human_coords)])
+            return ChosenAction(func, (get_coord_from_human_tile_description(human_coords),))
         elseif fname == "br"
             human_coords = out_str[2]
             @info human_coords
             @info [get_road_coords_from_human_tile_description(human_coords)]
-            return (func, get_road_coords_from_human_tile_description(human_coords)..., true)
+            return ChosenAction(func, (get_road_coords_from_human_tile_description(human_coords)..., true))
         elseif fname == "pt" # pt 2 w w g g
             amount_are_mine = parse(Int, out_str[2])
             goods = join(out_str[3:end], " ")
             parsed_goods = [_parse_resources_str(goods)...]
             from_goods = parsed_goods[1:amount_are_mine]
             to_goods = parsed_goods[(amount_are_mine+1):end]
-            return (func, from_goods, to_goods)
+            return ChosenAction(func, (from_goods, to_goods))
         elseif fname == "bd"
-            return (func, [])
+            return ChosenAction(func)
         elseif fname == "pd"
-            return (func, [], 0, nothing, _parse_symbol(out_str[2], configs))
+            return ChosenAction(func, (_parse_devcard_symbol(out_str[2], configs)))
         else
-            return (func, [])
+            return ChosenAction(func)
         end
     end
 end
@@ -131,16 +135,6 @@ function _parse_ints(io, descriptor, configs::Dict)
         return get_coord_from_human_tile_description(human_response)
     end
     return asints
-end
-
-function _parse_devcard(io, descriptor, configs::Dict)
-    reminder = join(["$k: $v" for (k,v) in HUMAN_DEVCARD_TO_SYMBOL], " ")
-    @info "($reminder)"
-    dc_response = input(io, descriptor, configs::Dict)
-    if dc_response in ["", "n", "no"]
-        return :nothing
-    end
-    return HUMAN_DEVCARD_TO_SYMBOL[uppercase(dc_response)]
 end
 
 function _parse_resources(io::IO, descriptor::String, configs::Dict)
