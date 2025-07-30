@@ -27,7 +27,6 @@ import .BoardApi
 include("apis/game_api.jl")
 import .GameApi
 
-include("apis/human_action_interface.jl")
 include("trading.jl")
 
 include("main.jl")
