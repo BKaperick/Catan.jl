@@ -98,6 +98,10 @@ struct PreAction
     function PreAction(name::Symbol, admissible_args::Vector{Tuple{T, T}}) where {T <: Any}
         new(name, unique(admissible_args))
     end
+
+    function PreAction(name::Symbol, admissible_args::Vector{Tuple{T1, T2, T3}}) where {T1,T2,T3 <: Any}
+        new(name, unique(admissible_args))
+    end
 end
 
 Base.:(==)(x::PreAction, y::PreAction) = x.name == y.name && x.admissible_args == y.admissible_args

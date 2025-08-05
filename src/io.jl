@@ -120,13 +120,13 @@ end
 Generate a random board conforming to the game constraints set in constants.jl.
 Save the generated map.
 """
-function generate_random_map(fname::String)
+function generate_random_map(fname::String)::IO
     io = generate_random_map(open(fname, "w"))
     close(io)
-    return fname
+    return io
 end
 
-function generate_random_map(io::IO)
+function generate_random_map(io::IO)::IO
     resource_bag = shuffle!(vcat([repeat([lowercase(string(r)[1])], c) for (r,c) in RESOURCE_TO_COUNT]...))
     dicevalue_bag = shuffle!(vcat([repeat([r], c) for (r,c) in DICEVALUE_TO_COUNT]...))
 
@@ -163,7 +163,7 @@ function generate_random_map(io::IO)
 
    return io
 end
-function generate_random_map()
+function generate_random_map()::String
     io = generate_random_map(IOBuffer())
     map_str = String(take!(io))
     close(io)
@@ -189,7 +189,7 @@ Logs the action to the SAVE_FILE if `SAVE_GAME_TO_FILE` is true.
 Otherwise, it is a no-op.
 """
 function log_action(configs::Dict, fname::String, args...)::Nothing
-    if ~configs["SAVE_GAME_TO_FILE"]
+    if configs["SAVE_GAME_TO_FILE"] == "" || !configs["SAVE_GAME_TO_FILE"]
         return
     end
     if configs["SERIALIZATION_STRATEGY"] == "JSON"
