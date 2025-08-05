@@ -292,13 +292,15 @@ end
 
 function load_gamestate!(game, board)
     file = game.configs["SAVE_FILE"]
-    @info "Loading game from file $file"
-    for line in readlines(file)
-        @info line
-        if game.configs["SERIALIZATION_STRATEGY"] == "JSON"
-            execute_api_call_json(game, board, line)
-        else
-            execute_api_call_text(game, board, line)
+    if isfile(file) #~isdir(file)
+        @info "Loading game from file $file"
+        for line in readlines(file)
+            @info line
+            if game.configs["SERIALIZATION_STRATEGY"] == "JSON"
+                execute_api_call_json(game, board, line)
+            else
+                execute_api_call_text(game, board, line)
+            end
         end
     end
     if game.configs["PRINT_BOARD"]

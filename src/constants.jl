@@ -132,6 +132,10 @@ end
 reset_savefile!(configs::Dict) = reset_savefile!(configs, joinpath(@__DIR__, "..", configs["SAVE_FILE"]))
 
 function reset_savefile!(configs::Dict, path)
+    if isdir(path)
+        return
+    end
+
     configs["SAVE_FILE"] = path
 
     if configs["SAVE_GAME_TO_FILE"] && ~isfile(path)
