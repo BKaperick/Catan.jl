@@ -141,3 +141,19 @@ function test_player_implementation(T::Type, configs) #where {T <: PlayerType}
     choose_resource_to_draw(board, players, player)
     #get_legal_action_functions(board, players, player, actions)
 end
+
+function doset(ti)
+    desc = ti.name
+    if :broken in ti.tags || :skipactions in ti.tags
+        return false
+    end
+    if length(ARGS) == 0
+        return true
+    end
+    for a in ARGS
+        if occursin(lowercase(a), lowercase(desc))
+            return true
+        end
+    end
+    return false
+end

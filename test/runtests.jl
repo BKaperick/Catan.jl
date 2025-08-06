@@ -28,7 +28,8 @@ using Catan:
     test_automated_game,
     reset_savefile_with_timestamp,
     RESOURCES,
-    parse_configs
+    parse_configs,
+    doset
 
 
 @testsnippet global_test_setup begin
@@ -55,28 +56,14 @@ using Catan:
     test_automated_game,
     reset_savefile_with_timestamp,
     RESOURCES,
-    parse_configs
+    parse_configs,
+    doset
     configs = parse_configs("_tmp_Configuration.toml")
     
     # Only difference is some changing of dice values for testing
     configs["MAP_FILE_2"] = "sample_2.csv"
 end
 
-function doset(ti)
-    desc = ti.name
-    if :broken in ti.tags || :skipactions in ti.tags
-        return false
-    end
-    if length(ARGS) == 0
-        return true
-    end
-    for a in ARGS
-        if occursin(lowercase(a), lowercase(ti.name))
-            return true
-        end
-    end
-    return false
-end
 @testitem "jet_fails" tags=[:slow] setup=[global_test_setup] begin
     rep = report_package(Catan;
     ignored_modules=())
