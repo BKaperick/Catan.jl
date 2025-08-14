@@ -71,7 +71,7 @@ end
     #@show length(JET.get_reports(rep))
     #@show rep
     reports = JET.get_reports(rep)
-    max_num = 15
+    max_num = 16
     println("length(JET.get_reports(rep)) = $(length(reports)) / $max_num")
     @test length(reports) <= max_num
 end

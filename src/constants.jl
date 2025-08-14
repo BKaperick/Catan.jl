@@ -129,7 +129,7 @@ function reset_savefile!(configs::Dict, path, io)
     configs["SAVE_FILE_IO"] = io
 end
 
-reset_savefile!(configs::Dict) = reset_savefile!(configs, joinpath(@__DIR__, "..", configs["SAVE_FILE"]))
+reset_savefile!(configs::Dict) = reset_savefile!(configs, joinpath(pwd(), configs["SAVE_FILE"]))
 
 function reset_savefile!(configs::Dict, path)
     if isdir(path)
@@ -138,11 +138,13 @@ function reset_savefile!(configs::Dict, path)
 
     configs["SAVE_FILE"] = path
 
-    if configs["SAVE_GAME_TO_FILE"] && ~isfile(path)
-        io = open(path, "w"); write(io,""); close(io)
+    if configs["SAVE_GAME_TO_FILE"] 
+        @debug "Saving game to $path"
+        if ~isfile(path)
+            io = open(path, "w"); write(io,""); close(io)
+        end
+        configs["SAVE_FILE_IO"] = open(path, "a")
     end
-    configs["SAVE_FILE_IO"] = open(path, "a")
-    @debug "Savefile set to $path"
 end
 
 const VP_AWARDS = Dict([

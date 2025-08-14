@@ -40,16 +40,21 @@ Handles three cases: LOAD_MAP from file if specified, write the map to SAVE_MAP 
 and if neither are set, then we just generate the map and keep in memory.
 """
 function read_map(configs::Dict)::Board
-    if ~isempty(configs["LOAD_MAP"])
-        fname = configs["LOAD_MAP"]
-        map_str = read(fname, String)
-        if ~isempty(configs["SAVE_MAP"]) && configs["SAVE_MAP"] != configs["LOAD_MAP"]
-            cp(fname, configs["SAVE_MAP"]; force=true)
+    load_path = configs["LOAD_MAP"]
+    save_path = configs["SAVE_MAP"]
+    if ~isempty(load_path)
+        @info "Loading map from $load_path"
+        map_str = read(load_path, String)
+        if ~isempty(save_path) && abspath(save_path) != abspath(load_path)
+            cp(load_path, save_path; force=true)
         end
-    elseif ~isempty(configs["SAVE_MAP"])
-        fname = generate_random_map(configs["SAVE_MAP"])
-        map_str = read(fname, String)
+    elseif ~isempty(save_path)
+        @info "Generating random map to save in $save_path"
+        generate_random_map(save_path)
+        map_str = read(save_path, String)
+        @info map_str
     else
+        @info "Generating random map without saving it"
         map_str = generate_random_map()
     end
     return read_map(configs, map_str)
@@ -120,13 +125,13 @@ end
 Generate a random board conforming to the game constraints set in constants.jl.
 Save the generated map.
 """
-function generate_random_map(fname::String)::IO
-    io = generate_random_map(open(fname, "w"))
+function generate_random_map(fname::String)::Nothing
+    io = open(fname, "w")
+    generate_random_map(io)
     close(io)
-    return io
 end
 
-function generate_random_map(io::IO)::IO
+function generate_random_map(io::IO)::Nothing
     resource_bag = shuffle!(vcat([repeat([lowercase(string(r)[1])], c) for (r,c) in RESOURCE_TO_COUNT]...))
     dicevalue_bag = shuffle!(vcat([repeat([r], c) for (r,c) in DICEVALUE_TO_COUNT]...))
 
@@ -160,8 +165,7 @@ function generate_random_map(io::IO)::IO
     for (p,r) in zip(ports,resources)
         write(io, "$(string(p)),$r\n")
     end
-
-   return io
+    return
 end
 function generate_random_map()::String
     io = generate_random_map(IOBuffer())
@@ -225,7 +229,7 @@ function log_action_json(file_io::IO, fname::String, args)::Nothing
     msg["type"] = api_name
     msg["action"] = func_name
     msg["args"] = args
-    @info msg
+    @debug msg
     JSON.print(file_io, msg)
     println(file_io)
 end
@@ -290,17 +294,21 @@ function execute_api_call(game::Game, board::Board, api_call::Function, api_type
     end
 end
 
+function parse_and_execute_api_call(game, board, line)
+    @info line
+    if game.configs["SERIALIZATION_STRATEGY"] == "JSON"
+        execute_api_call_json(game, board, line)
+    else
+        execute_api_call_text(game, board, line)
+    end
+end
+
 function load_gamestate!(game, board)
     file = game.configs["SAVE_FILE"]
     if isfile(file) #~isdir(file)
         @info "Loading game from file $file"
         for line in readlines(file)
-            @info line
-            if game.configs["SERIALIZATION_STRATEGY"] == "JSON"
-                execute_api_call_json(game, board, line)
-            else
-                execute_api_call_text(game, board, line)
-            end
+            parse_and_execute_api_call(game, board, line)
         end
     end
     if game.configs["PRINT_BOARD"]

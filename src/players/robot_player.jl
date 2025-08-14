@@ -190,3 +190,8 @@ function choose_who_to_trade_with(board::Board, player::RobotPlayer, players::Ab
     @info "$(player) decided it is wisest to do business with $(max_ind.team) player"
     return max_ind.team
 end
+
+function get_state_score(board::Board, player::PlayerType)::Float64
+    
+    GameRunner.get_total_vp_count(board, player.player) #/ 10
+end

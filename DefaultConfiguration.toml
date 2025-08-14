@@ -1,5 +1,5 @@
 SAVE_GAME_TO_FILE = true
-SAVE_FILE = "./data/savefile.txt"
+SAVE_FILE = "./savefile.txt"
 # Directory for storing temporary files like an on-the-fly generated map file
 TEMP_DIR = "./tmp/"
 SAVE_MAP = "./tmp/_temp_map_file.csv"

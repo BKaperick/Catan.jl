@@ -53,15 +53,20 @@ API_DICTIONARY = Dict(
 Run one game, returning the board and the winner, accepting a config TOML file to 
 overwrite any default configuration keys set in ./DefaultConfiguration.toml.
 """
-function run(configs::Dict)
-    players = create_players(configs)
-    return run(players, configs)
+function run(configs::Dict, rng=nothing)
+    if ~isnothing(rng)
+        Random.seed!(rng)
+    end
+    return run(Game(configs))
+end
+function run(config_path::String, rng=nothing)
+    configs = parse_configs(config_path)
+    run(configs, rng)
 end
 
-function run(players::AbstractVector{PlayerType}, configs)
-    game = Game(players, configs)
-
-    run(game)
+function Game(configs)
+    players = create_players(configs)
+    Game(players, configs)
 end
 
 function run(game::Game)
@@ -174,7 +179,12 @@ function harvest_resources(board, players, dice_value)
         for coord in TILE_TO_COORDS[tile]
             if coord in keys(board.coord_to_building)
                 building = board.coord_to_building[coord]
-                player = [p.player for p in players if p.player.team == building.team][1]
+                @info building.team
+                candidates = [p.player for p in players if p.player.team == building.team]
+                if length(candidates) == 0
+                    @warn "Building team not found: $(building.team)"
+                end
+                player = candidates[1]
                 push!(resource_to_harvest_targets[resource], (player, building.type))
             end
         end

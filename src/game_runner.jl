@@ -55,6 +55,12 @@ function initialize_game!(game::Game)
 end
 
 function initialize_game!(game::Game, board::Board)
+    if haskey(game.configs, "SAVE_FILE") && game.configs["SAVE_FILE"] != ""
+        @info "Initializing game from file $(game.configs["SAVE_FILE"])"
+    end
+    if game.configs["SAVE_GAME_TO_FILE"] 
+        @info "Saving game to $(game.configs["SAVE_FILE"])"
+    end
     load_gamestate!(game, board)
 
     for p in game.players
@@ -125,12 +131,14 @@ function do_rest_of_game!(game, board)
             BoardApi.print_board(board)
         end
 
-        @info "turn num $(game.turn_num)"
+        @warn "turn num $(game.turn_num)"
 
         if game.turn_num >= game.configs["MAX_TURNS"]
             break
         end
     end
+    @warn "Closing save file stream $(game.configs["SAVE_FILE_IO"])"
+    close(game.configs["SAVE_FILE_IO"])
 end
 
 function do_first_turn(game::Game, board::Board, players)
