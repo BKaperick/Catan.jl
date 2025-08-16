@@ -33,6 +33,11 @@ struct Building
     team::Symbol
 end
 
+
+# TODO: Either 
+# (1) Create a non-mutable `struct Map` that contains all the non-changing data structures
+# (2) Create a function to reset a board to the initial game state.
+# (3) Both - separate out Map, copy()ing just re-uses Map, and a function to reset
 mutable struct Board
     tile_to_dicevalue::Dict{Symbol,Int8}
     #dicevalue_to_coords::Dict{Symbol,Int}
@@ -52,6 +57,9 @@ mutable struct Board
     longest_road::Union{Nothing, Symbol}
     largest_army::Union{Nothing, Symbol}
     configs::Dict
+end
+
+struct Map
 end
 
 Board(tile_to_value::Dict, dicevalue_to_tiles::Dict, tile_to_resource::Dict, 
