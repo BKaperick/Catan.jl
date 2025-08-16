@@ -33,6 +33,10 @@ get_next_action_func(player::PlayerType, action_name::Symbol)::Function = ACTION
 
 function initialize_and_do_game!(game::Game)::Tuple{Board, Union{PlayerType, Nothing}}
     board = initialize_game!(game)
+    initialize_and_do_game!(game, board)
+end
+
+function initialize_and_do_game!(game::Game, board::Board)::Tuple{Board, Union{PlayerType, Nothing}}
     winner = do_game(game, board)
     return board, winner
 end
@@ -131,14 +135,13 @@ function do_rest_of_game!(game, board)
             BoardApi.print_board(board)
         end
 
-        @warn "turn num $(game.turn_num)"
+        @info "turn num $(game.turn_num)"
 
         if game.turn_num >= game.configs["MAX_TURNS"]
             break
         end
     end
-    @warn "Closing save file stream $(game.configs["SAVE_FILE_IO"])"
-    close(game.configs["SAVE_FILE_IO"])
+    @info "Closing save file stream $(game.configs["SAVE_FILE_IO"])"
 end
 
 function do_first_turn(game::Game, board::Board, players)

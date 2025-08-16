@@ -140,10 +140,7 @@ function reset_savefile!(configs::Dict, path)
 
     if configs["SAVE_GAME_TO_FILE"] 
         @debug "Saving game to $path"
-        if ~isfile(path)
-            io = open(path, "w"); write(io,""); close(io)
-        end
-        configs["SAVE_FILE_IO"] = open(path, "a")
+        configs["SAVE_FILE_IO"] = open(touch(path), "a")
     end
 end
 

@@ -123,7 +123,7 @@ end
 
 """
 Generate a random board conforming to the game constraints set in constants.jl.
-Save the generated map.
+Save the generated map to `fname`.
 """
 function generate_random_map(fname::String)::Nothing
     io = open(fname, "w")

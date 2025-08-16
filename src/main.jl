@@ -73,6 +73,10 @@ function run(game::Game)
     GameRunner.initialize_and_do_game!(game)
 end
 
+function run(game::Game, board::Board)
+    GameRunner.initialize_and_do_game!(game, board)
+end
+
 function run_async(configs::Dict)
     players = create_players(configs)
     channels = read_channels_from_config(configs)
