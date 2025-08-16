@@ -191,6 +191,13 @@ function choose_who_to_trade_with(board::Board, player::RobotPlayer, players::Ab
     return max_ind.team
 end
 
+"""
+    get_state_score(board::Board, player::PlayerType)::Float64
+
+Optional method used to reveal the internal scoring model for the `PlayerType`.  By default, it just returns the 
+current vp count of the player.  This is intended for use in analysis of the player performance turn-by-turn to 
+see how its confidence of its current state evolves.
+"""
 function get_state_score(board::Board, player::PlayerType)::Float64
     
     GameRunner.get_total_vp_count(board, player.player) #/ 10
