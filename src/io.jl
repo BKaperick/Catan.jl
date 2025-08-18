@@ -94,9 +94,16 @@ function Map(map_str::AbstractString)::Map
         end
     end
 
-    dicevalue_to_tiles = Dict([v => [] for (k,v) in tile_to_dicevalue])
+    #dicevalue_to_tiles = Dict([v => SVector{2, Symbol}(:Empty, :Empty) for (k,v) in tile_to_dicevalue])
+    dicevalue_to_tiles = Dict([v => [:Empty, :Empty] for (k,v) in tile_to_dicevalue])
     for (t,d) in tile_to_dicevalue
-        push!(dicevalue_to_tiles[d], t)
+        if dicevalue_to_tiles[d][1] == :Empty
+            dicevalue_to_tiles[d][1] = t
+        elseif dicevalue_to_tiles[d][2] == :Empty
+            dicevalue_to_tiles[d][2] = t
+        else
+            @assert false "This case shouldn't happen"
+        end
     end
     
     coord_to_port = Dict()
@@ -112,7 +119,7 @@ function Map(map_str::AbstractString)::Map
 
     @assert length(keys(map.tile_to_dicevalue)) == length(keys(TILE_TO_COORDS)) # 17
     t = sum(values(map.tile_to_dicevalue))
-    @assert sum(values(map.tile_to_dicevalue)) == 133 "Sum of dice values is $(t) instead of 133"
+    @assert t == 133 "Sum of dice values is $(t) instead of 133"
     @assert length([r for r in values(map.tile_to_resource) if r == :Wood]) == RESOURCE_TO_COUNT[:Wood]
     @assert length([r for r in values(map.tile_to_resource) if r == :Stone]) == RESOURCE_TO_COUNT[:Stone]
     @assert length([r for r in values(map.tile_to_resource) if r == :Grain]) == RESOURCE_TO_COUNT[:Grain]

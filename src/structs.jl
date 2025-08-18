@@ -35,7 +35,7 @@ end
 
 struct Map
     tile_to_dicevalue::Dict{Symbol,Int8}
-    dicevalue_to_tiles::Dict{Int8,Vector{Symbol}}
+    dicevalue_to_tiles::Dict{Int8,AbstractVector{Symbol}}
     tile_to_resource::Dict{Symbol,Symbol}
     coord_to_port::Dict{Tuple{Int8,Int8},Symbol}
     desert_tile::Symbol
