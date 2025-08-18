@@ -1,14 +1,14 @@
 mutable struct Game
-    devcards::Dict{Symbol,Int8}
+    const devcards::Dict{Symbol,Int8}
     players::AbstractVector{PlayerType}
     # This field is needed in order to reload a game that was saved and quit in the middle of a turn
-    already_played_this_turn::Set{Symbol}
+    const already_played_this_turn::Set{Symbol}
     turn_num::Int
     turn_order_set::Bool
     first_turn_forward_finished::Bool
     rolled_dice_already::Bool
-    unique_id::Int
-    configs::Dict{String, Any}
+    const unique_id::Int
+    const configs::Dict{String, Any}
 end
 
 Game(players::AbstractVector{PlayerType}) = Game(SVector{length(players)}(players), Dict{String, Any}())
@@ -46,7 +46,7 @@ end
 # (2) Create a function to reset a board to the initial game state.
 # (3) Both - separate out Map, copy()ing just re-uses Map, and a function to reset
 mutable struct Board
-    map::Map
+    const map::Map
     coord_to_building::Dict{Tuple{Int8,Int8},Building}
     coord_to_roads::Dict{Tuple{Int8, Int8}, Set{Road}}
     coord_to_road_teams::Dict{Tuple{Int8, Int8}, Set{Symbol}}
@@ -59,7 +59,7 @@ mutable struct Board
     # Team of player with the longest road card (is nothing if no player has a road at least 5 length)
     longest_road::Union{Nothing, Symbol}
     largest_army::Union{Nothing, Symbol}
-    configs::Dict
+    const configs::Dict
 end
 
 Board(map_str::AbstractString, configs::Dict) = Board(Map(map_str), configs)
