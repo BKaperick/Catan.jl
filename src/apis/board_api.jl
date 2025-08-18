@@ -38,21 +38,9 @@ It supports
 """
 module BoardApi
 using ..Catan: Board, Building, Road, log_action, 
-DIMS, COORD_TO_TILES, VP_AWARDS, TILE_TO_COORDS, COSTS, read_map, generate_random_map
+DIMS, COORD_TO_TILES, VP_AWARDS, TILE_TO_COORDS, COSTS, generate_random_map
 include("../board.jl")
 include("../draw_board.jl")
-
-function Board(configs::Dict)
-    #=
-    if haskey(configs, "LOAD_MAP")
-        map = read_map(configs["LOAD_MAP"])
-    end
-    if haskey(configs, "SAVE_MAP")
-        map = generate_random_map(configs["SAVE_MAP"])
-    end
-    =#
-    read_map(configs)
-end
 
 function count_settlements(board, team)
     return count_buildings_low_alloc(board, team, :Settlement)
@@ -525,7 +513,7 @@ function get_public_vp_count(board::Board, team::Symbol)::Int
 end
 
 function get_admissible_robber_tiles(board::Board)::Vector{Symbol}
-    [t for t in keys(board.tile_to_dicevalue) if t != board.robber_tile]
+    [t for t in keys(board.map.tile_to_dicevalue) if t != board.robber_tile]
 end
 
 function can_draw_resource(board::Board, resource::Symbol)

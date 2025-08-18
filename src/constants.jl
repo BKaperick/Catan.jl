@@ -231,7 +231,7 @@ const RESOURCES = Set([
                  :Pasture
                 ])
 
-const RESOURCE_TO_COUNT = Dict([
+const RESOURCE_TO_COUNT = Dict{Symbol, Int8}([
     :Wood => 4
     :Stone => 3
     :Grain => 4

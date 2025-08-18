@@ -1,6 +1,6 @@
 module GameRunner
 using ..Catan: Game, Board, PlayerType, HumanPlayer, Player, PlayerPublicView, PreAction, ChosenAction,
-               read_map, load_gamestate!, initialize_player,
+               load_gamestate!, initialize_player,
                do_first_turn_building!,
                decide_and_roll_dice!,choose_next_action, do_post_game_produce!,
                do_post_action_step, do_post_game_action, get_legal_actions,
@@ -54,7 +54,7 @@ function initialize_and_do_game_async!(channels::Dict, game::Game, board)::Tuple
 end
 
 function initialize_game!(game::Game)
-    board = read_map(game.configs)
+    board = Board(game.configs)
     initialize_game!(game, board)
 end
 
@@ -165,7 +165,7 @@ function do_first_turn_reverse(game, board, players)
     for player in reverse(GameApi.get_players_to_play(game))
         settlement = do_first_turn_building!(game, board, players, player)
         for tile in COORD_TO_TILES[settlement.coord]
-            resource = board.tile_to_resource[tile]
+            resource = board.map.tile_to_resource[tile]
             if resource != :Desert
                 PlayerApi.give_resource!(player.player, resource)
                 BoardApi.draw_resource!(board, resource)

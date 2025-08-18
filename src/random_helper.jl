@@ -13,7 +13,7 @@ function unsafe_random_sample_one_resource(resources::Dict{Symbol, T}, replace=f
     return sample(items, 1, replace=replace)[1]
 end
 
-function random_sample_resources(resources::Dict{Symbol, Int}, count, replace=false)::Vector{Symbol}
+function random_sample_resources(resources::Dict{Symbol, TInt}, count, replace=false)::Vector{Symbol} where TInt <: Integer
     items = Vector{Symbol}()
     for (r,c) in resources
         if c > 0
@@ -26,7 +26,7 @@ function random_sample_resources(resources::Dict{Symbol, Int}, count, replace=fa
 end
 
 function get_random_tile(board)::Symbol
-    candidates = [keys(board.tile_to_dicevalue)...]
+    candidates = [keys(board.map.tile_to_dicevalue)...]
     return sample(candidates, 1)[1]
 end
 

@@ -1,14 +1,14 @@
 mutable struct Game
-    devcards::Dict{Symbol,Int8}
+    const devcards::Dict{Symbol,Int8}
     players::AbstractVector{PlayerType}
     # This field is needed in order to reload a game that was saved and quit in the middle of a turn
-    already_played_this_turn::Set{Symbol}
+    const already_played_this_turn::Set{Symbol}
     turn_num::Int
     turn_order_set::Bool
     first_turn_forward_finished::Bool
     rolled_dice_already::Bool
-    unique_id::Int
-    configs::Dict{String, Any}
+    const unique_id::Int
+    const configs::Dict{String, Any}
 end
 
 Game(players::AbstractVector{PlayerType}) = Game(SVector{length(players)}(players), Dict{String, Any}())
@@ -33,15 +33,23 @@ struct Building
     team::Symbol
 end
 
-mutable struct Board
+struct Map
     tile_to_dicevalue::Dict{Symbol,Int8}
-    #dicevalue_to_coords::Dict{Symbol,Int}
-    dicevalue_to_tiles::Dict{Int8,Vector{Symbol}}
+    dicevalue_to_tiles::Dict{Int8,AbstractVector{Symbol}}
     tile_to_resource::Dict{Symbol,Symbol}
+    coord_to_port::Dict{Tuple{Int8,Int8},Symbol}
+    desert_tile::Symbol
+end
+
+# TODO: Either 
+# (1) Create a non-mutable `struct Map` that contains all the non-changing data structures
+# (2) Create a function to reset a board to the initial game state.
+# (3) Both - separate out Map, copy()ing just re-uses Map, and a function to reset
+mutable struct Board
+    const map::Map
     coord_to_building::Dict{Tuple{Int8,Int8},Building}
     coord_to_roads::Dict{Tuple{Int8, Int8}, Set{Road}}
     coord_to_road_teams::Dict{Tuple{Int8, Int8}, Set{Symbol}}
-    coord_to_port::Dict{Tuple{Int8,Int8},Symbol}
     buildings::Array{Building,1}
     roads::Array{Road,1}
     team_to_road_length::Dict{Symbol, Int8}
@@ -51,28 +59,23 @@ mutable struct Board
     # Team of player with the longest road card (is nothing if no player has a road at least 5 length)
     longest_road::Union{Nothing, Symbol}
     largest_army::Union{Nothing, Symbol}
-    configs::Dict
+    const configs::Dict
 end
 
-Board(tile_to_value::Dict, dicevalue_to_tiles::Dict, tile_to_resource::Dict, 
-      robber_tile::Symbol, coord_to_port::Dict, configs::Dict) = Board(tile_to_value, 
-      dicevalue_to_tiles, tile_to_resource, Dict(), Dict(), Dict(), coord_to_port, 
-      [], [], Dict(), robber_tile, 
+Board(map_str::AbstractString, configs::Dict) = Board(Map(map_str), configs)
+Board(map::Map, configs::Dict) = Board(map, Dict(), Dict(), Dict(), 
+      [], [], Dict(), map.desert_tile, 
       BoardApi.initialize_empty_board(), 
       Dict([(r, configs["GameSettings"]["MaxComponents"]["RESOURCE"]) for r in RESOURCES]), 
       nothing, nothing, configs)
-Board(csvfile) = BoardApi.Board(csvfile)
+#Board(csvfile) = BoardApi.Board(csvfile)
 
 function Base.copy(board::Board)
     return Board(
-                 copy(board.tile_to_dicevalue),
-                 copy(board.dicevalue_to_tiles),
-                 copy(board.tile_to_resource),
+                 board.map,
                  copy(board.coord_to_building),
-                 #copy(board.coord_to_roads),
                  Dict([k=>copy(v) for (k,v) in board.coord_to_roads]),
                  copy(board.coord_to_road_teams),
-                 copy(board.coord_to_port),
                  copy(board.buildings),
                  copy(board.roads),
                  copy(board.team_to_road_length),
@@ -124,6 +127,8 @@ function Base.show(io::IO, a::ChosenAction)
         print(io, "$(a.name)($(a.args))")
     end
 end
+
+Base.length(a::PreAction) = length(a.admissible_args)
 
 function Base.show(io::IO, a::PreAction)
     compact = get(io, :compact, false)
