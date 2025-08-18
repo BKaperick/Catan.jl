@@ -33,6 +33,11 @@ struct Building
     team::Symbol
 end
 
+struct Map
+    tile_to_dicevalue::Dict{Symbol,Int8}
+    dicevalue_to_tiles::Dict{Int8,Vector{Symbol}}
+    tile_to_resource::Dict{Symbol,Symbol}
+end
 
 # TODO: Either 
 # (1) Create a non-mutable `struct Map` that contains all the non-changing data structures
@@ -56,11 +61,6 @@ mutable struct Board
     configs::Dict
 end
 
-struct Map
-    tile_to_dicevalue::Dict{Symbol,Int8}
-    dicevalue_to_tiles::Dict{Int8,Vector{Symbol}}
-    tile_to_resource::Dict{Symbol,Symbol}
-end
 
 Board(map::Map,
       robber_tile::Symbol, coord_to_port::Dict, configs::Dict) = Board(map, Dict(), Dict(), Dict(), 
