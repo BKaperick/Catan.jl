@@ -82,3 +82,14 @@ BenchmarkTools.Trial: 3890 samples with 1 evaluation per sample.
 
  Memory estimate: 1.46 MiB, allocs estimate: 37559.
 
+v1.2.0
+BenchmarkTools.Trial: 4341 samples with 1 evaluation per sample.
+ Range (min … max):   1.352 ms … 62.686 ms  ┊ GC (min … max): 0.00% … 11.30%
+ Time  (median):      9.998 ms              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   13.813 ms ± 10.462 ms  ┊ GC (mean ± σ):  8.65% ± 13.43%
+
+     ▄▆█▇▆▅▃▃▁▁                                                
+  ▂▃▇██████████▇▇▆▆▆▆▅▅▄▄▅▃▃▃▃▃▃▃▂▃▃▃▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▂▁▁▁▂ ▃
+  1.35 ms         Histogram: frequency by time        47.2 ms <
+
+ Memory estimate: 1.10 MiB, allocs estimate: 29497.
