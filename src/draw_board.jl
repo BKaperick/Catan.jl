@@ -15,8 +15,8 @@ function right_angle(b,x,y)
 end
 
 function add_resource_and_dice_value(board, tile, b, x, y)
-    b[y+2][x+1] = string(string(board.tile_to_resource[tile])[1])
-    number = string(board.tile_to_dicevalue[tile])
+    b[y+2][x+1] = string(string(board.map.tile_to_resource[tile])[1])
+    number = string(board.map.tile_to_dicevalue[tile])
     if length(number) == 2
         b[y+2][x+2] = string(number[1])
         b[y+2][x+3] = string(number[2])

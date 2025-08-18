@@ -59,8 +59,8 @@ function construct_settlement(board, player::Player, coord::Tuple{Integer, Integ
 end
 
 function check_add_port(board::Board, player::Player, coord)
-    if haskey(board.coord_to_port, coord)
-        PlayerApi.add_port!(player, board.coord_to_port[coord])
+    if haskey(board.map.coord_to_port, coord)
+        PlayerApi.add_port!(player, board.map.coord_to_port[coord])
     end
 end
 

@@ -4,16 +4,16 @@ import Base: copy
 abstract type PlayerType end
 mutable struct Player
     # Private fields (can't be directly accessed by other players)
-    resources::Dict{Symbol,Int8}
-    devcards::Dict{Symbol,Int8}
+    const resources::Dict{Symbol,Int8}
+    const devcards::Dict{Symbol,Int8}
     
     # Public fields (can be used by other players to inform their moves)
-    team::Symbol
-    devcards_used::Dict{Symbol,Int8}
-    ports::Dict{Symbol, Int8}
+    const team::Symbol
+    const devcards_used::Dict{Symbol,Int8}
+    const ports::Dict{Symbol, Int8}
     played_devcard_this_turn::Bool
     bought_devcard_this_turn::Union{Nothing,Symbol}
-    configs::Dict
+    const configs::Dict
 end
 
 function Player(team::Symbol, configs::Dict)
@@ -24,8 +24,19 @@ function Player(team::Symbol, configs::Dict)
     :Brick => 4
     :Pasture => 4
     ])
-    return Player(Dict([(r,Int8(0)) for r in RESOURCES]), Dict(), team, Dict(), default_ports, false, nothing, configs)
+    return Player(team, configs, Dict([(r,Int8(0)) for r in RESOURCES]))
 end
+function Player(team::Symbol, configs::Dict, resources::Dict{Symbol, Int8})
+    default_ports = Dict([
+    :Wood => 4
+    :Stone => 4
+    :Grain => 4
+    :Brick => 4
+    :Pasture => 4
+    ])
+    return Player(resources, Dict(), team, Dict(), default_ports, false, nothing, configs)
+end
+
 
 """
     PlayerPublicView
@@ -69,14 +80,14 @@ PlayerPublicView(player::Player) = PlayerPublicView(
    )
 
 
-mutable struct HumanPlayer <: PlayerType
+struct HumanPlayer <: PlayerType
     player::Player
     io::IO
 end
 abstract type RobotPlayer <: PlayerType
 end
 
-mutable struct DefaultRobotPlayer <: RobotPlayer
+struct DefaultRobotPlayer <: RobotPlayer
     player::Player
 end
 
@@ -117,6 +128,8 @@ HumanPlayer(team::Symbol, io::IO, configs::Dict) = HumanPlayer(Player(team, conf
 HumanPlayer(team::Symbol, configs::Dict) = HumanPlayer(team, stdin, configs)
 
 DefaultRobotPlayer(team::Symbol, configs::Dict) = DefaultRobotPlayer(Player(team, configs))
+DefaultRobotPlayer(team::Symbol, configs::Dict, resources::Dict{Symbol, Int8}) = DefaultRobotPlayer(Player(team, configs, resources))
+
 
 function Base.copy(player::DefaultRobotPlayer)
     return DefaultRobotPlayer(copy(player.player))

@@ -54,7 +54,7 @@ function finish_turn(game::Game)
     _finish_turn(game)
 end
 function _finish_turn(game)
-    game.already_played_this_turn = Set()
+    empty!(game.already_played_this_turn)
 end
 function can_draw_devcard(game::Game)
     return has_any_elements(game.devcards)
