@@ -57,10 +57,10 @@ function read_map(configs::Dict)::Board
         @info "Generating random map without saving it"
         map_str = generate_random_map()
     end
-    return read_map(configs, map_str)
+    return Board(map_str, configs)
 end
 
-function read_map(configs::Dict, map_str::String)::Board
+function read_map(map_str::AbstractString)::Map
     # Resource is a value W[ood],S[tone],G[rain],B[rick],P[asture]
     resourcestr_to_symbol = HUMAN_RESOURCE_TO_SYMBOL
     if length(map_str) == 0
@@ -93,6 +93,7 @@ function read_map(configs::Dict, map_str::String)::Board
             ports[portnum] = resourcestr_to_symbol[uppercase(resource_str)]
         end
     end
+
     dicevalue_to_tiles = Dict([v => [] for (k,v) in tile_to_dicevalue])
     for (t,d) in tile_to_dicevalue
         push!(dicevalue_to_tiles[d], t)
@@ -106,20 +107,20 @@ function read_map(configs::Dict, map_str::String)::Board
             coord_to_port[c] = :All
         end
     end
-
     @debug dicevalue_to_tiles
-    map = Map(tile_to_dicevalue, dicevalue_to_tiles, tile_to_resource)
-    board = Board(map, desert_tile, coord_to_port, configs)
-    @assert length(keys(board.map.tile_to_dicevalue)) == length(keys(TILE_TO_COORDS)) # 17
-    t = sum(values(board.map.tile_to_dicevalue))
-    @assert sum(values(board.map.tile_to_dicevalue)) == 133 "Sum of dice values is $(t) instead of 133"
-    @assert length([r for r in values(board.map.tile_to_resource) if r == :Wood]) == RESOURCE_TO_COUNT[:Wood]
-    @assert length([r for r in values(board.map.tile_to_resource) if r == :Stone]) == RESOURCE_TO_COUNT[:Stone]
-    @assert length([r for r in values(board.map.tile_to_resource) if r == :Grain]) == RESOURCE_TO_COUNT[:Grain]
-    @assert length([r for r in values(board.map.tile_to_resource) if r == :Brick]) == RESOURCE_TO_COUNT[:Brick]
-    @assert length([r for r in values(board.map.tile_to_resource) if r == :Pasture]) == RESOURCE_TO_COUNT[:Pasture]
-    @assert length([r for r in values(board.map.tile_to_resource) if r == :Desert]) == RESOURCE_TO_COUNT[:Desert]
-    return board
+    map = Map(tile_to_dicevalue, dicevalue_to_tiles, tile_to_resource, coord_to_port, desert_tile)
+
+    @assert length(keys(map.tile_to_dicevalue)) == length(keys(TILE_TO_COORDS)) # 17
+    t = sum(values(map.tile_to_dicevalue))
+    @assert sum(values(map.tile_to_dicevalue)) == 133 "Sum of dice values is $(t) instead of 133"
+    @assert length([r for r in values(map.tile_to_resource) if r == :Wood]) == RESOURCE_TO_COUNT[:Wood]
+    @assert length([r for r in values(map.tile_to_resource) if r == :Stone]) == RESOURCE_TO_COUNT[:Stone]
+    @assert length([r for r in values(map.tile_to_resource) if r == :Grain]) == RESOURCE_TO_COUNT[:Grain]
+    @assert length([r for r in values(map.tile_to_resource) if r == :Brick]) == RESOURCE_TO_COUNT[:Brick]
+    @assert length([r for r in values(map.tile_to_resource) if r == :Pasture]) == RESOURCE_TO_COUNT[:Pasture]
+    @assert length([r for r in values(map.tile_to_resource) if r == :Desert]) == RESOURCE_TO_COUNT[:Desert]
+
+    return map
 end
 
 """

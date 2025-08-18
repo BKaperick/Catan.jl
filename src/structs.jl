@@ -37,6 +37,8 @@ struct Map
     tile_to_dicevalue::Dict{Symbol,Int8}
     dicevalue_to_tiles::Dict{Int8,Vector{Symbol}}
     tile_to_resource::Dict{Symbol,Symbol}
+    coord_to_port::Dict{Tuple{Int8,Int8},Symbol}
+    desert_tile::Symbol
 end
 
 # TODO: Either 
@@ -48,7 +50,6 @@ mutable struct Board
     coord_to_building::Dict{Tuple{Int8,Int8},Building}
     coord_to_roads::Dict{Tuple{Int8, Int8}, Set{Road}}
     coord_to_road_teams::Dict{Tuple{Int8, Int8}, Set{Symbol}}
-    coord_to_port::Dict{Tuple{Int8,Int8},Symbol}
     buildings::Array{Building,1}
     roads::Array{Road,1}
     team_to_road_length::Dict{Symbol, Int8}
@@ -61,10 +62,9 @@ mutable struct Board
     configs::Dict
 end
 
-
-Board(map::Map,
-      robber_tile::Symbol, coord_to_port::Dict, configs::Dict) = Board(map, Dict(), Dict(), Dict(), 
-      coord_to_port, [], [], Dict(), robber_tile, 
+Board(map_str::AbstractString, configs::Dict) = Board(read_map(map_str), configs)
+Board(map::Map, configs::Dict) = Board(map, Dict(), Dict(), Dict(), 
+      [], [], Dict(), map.desert_tile, 
       BoardApi.initialize_empty_board(), 
       Dict([(r, configs["GameSettings"]["MaxComponents"]["RESOURCE"]) for r in RESOURCES]), 
       nothing, nothing, configs)
@@ -76,7 +76,6 @@ function Base.copy(board::Board)
                  copy(board.coord_to_building),
                  Dict([k=>copy(v) for (k,v) in board.coord_to_roads]),
                  copy(board.coord_to_road_teams),
-                 copy(board.coord_to_port),
                  copy(board.buildings),
                  copy(board.roads),
                  copy(board.team_to_road_length),
