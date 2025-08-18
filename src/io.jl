@@ -34,12 +34,12 @@ function read_channels_from_config(configs::Dict)::Dict{Symbol, Channel}
 end
 
 """
-    read_map(configs::Dict)::Board
+    Board(configs::Dict)::Board
 
 Handles three cases: LOAD_MAP from file if specified, write the map to SAVE_MAP if specified,
 and if neither are set, then we just generate the map and keep in memory.
 """
-function read_map(configs::Dict)::Board
+function Board(configs::Dict)::Board
     load_path = configs["LOAD_MAP"]
     save_path = configs["SAVE_MAP"]
     if ~isempty(load_path)
@@ -60,7 +60,7 @@ function read_map(configs::Dict)::Board
     return Board(map_str, configs)
 end
 
-function read_map(map_str::AbstractString)::Map
+function Map(map_str::AbstractString)::Map
     # Resource is a value W[ood],S[tone],G[rain],B[rick],P[asture]
     resourcestr_to_symbol = HUMAN_RESOURCE_TO_SYMBOL
     if length(map_str) == 0

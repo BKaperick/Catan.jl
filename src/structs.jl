@@ -62,13 +62,13 @@ mutable struct Board
     configs::Dict
 end
 
-Board(map_str::AbstractString, configs::Dict) = Board(read_map(map_str), configs)
+Board(map_str::AbstractString, configs::Dict) = Board(Map(map_str), configs)
 Board(map::Map, configs::Dict) = Board(map, Dict(), Dict(), Dict(), 
       [], [], Dict(), map.desert_tile, 
       BoardApi.initialize_empty_board(), 
       Dict([(r, configs["GameSettings"]["MaxComponents"]["RESOURCE"]) for r in RESOURCES]), 
       nothing, nothing, configs)
-Board(csvfile) = BoardApi.Board(csvfile)
+#Board(csvfile) = BoardApi.Board(csvfile)
 
 function Base.copy(board::Board)
     return Board(
@@ -127,6 +127,8 @@ function Base.show(io::IO, a::ChosenAction)
         print(io, "$(a.name)($(a.args))")
     end
 end
+
+Base.length(a::PreAction) = length(a.admissible_args)
 
 function Base.show(io::IO, a::PreAction)
     compact = get(io, :compact, false)

@@ -96,7 +96,7 @@ function test_player_implementation(T::Type, configs) #where {T <: PlayerType}
     player = private_players[1]
     players = PlayerPublicView.(private_players)
     game = Game(private_players, configs)
-    board = read_map(configs)::Board
+    board = Board(configs)::Board
     from_player = players[2]
     #actions = Catan.ALL_ACTIONS
     actions = Set([PreAction(:BuyDevCard)])

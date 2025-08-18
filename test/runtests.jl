@@ -9,7 +9,6 @@ using Catan
 using Catan: 
     get_coord_from_human_tile_description,
     get_road_coords_from_human_tile_description,
-    read_map,
     load_gamestate!,
     reset_savefile!,
     random_sample_resources,
@@ -37,7 +36,6 @@ using Catan:
     using Catan: 
     get_coord_from_human_tile_description,
     get_road_coords_from_human_tile_description,
-    read_map,
     load_gamestate!,
     reset_savefile!,
     random_sample_resources,
@@ -93,7 +91,7 @@ end
 end
 
 @testitem "copy_spaces" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     board_copy = copy(board)
     player1 = DefaultRobotPlayer(:Test1, configs)
     loc = BoardApi.get_admissible_settlement_locations(board, player1.player.team, true)[1]
@@ -110,7 +108,7 @@ end
 end
 
 @testitem "copy_roads" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     loc = BoardApi.get_admissible_settlement_locations(board, player1.player.team, true)[1]
     BoardApi.build_settlement!(board, :Test1, loc)
@@ -162,7 +160,7 @@ end
     @test game.players[4].player.team == :blue
     
     flush(configs["SAVE_FILE_IO"])
-    board = read_map(configs)
+    board = Board(configs)
     @info "testing logfile $(configs["SAVE_FILE"])"
     new_game = Game(players, configs)
     load_gamestate!(new_game, board)
@@ -235,7 +233,7 @@ end
     # initialize fresh objects
     new_players = setup_players(team_and_playertype, configs["PlayerSettings"])
     new_game = Game(new_players, configs)
-    new_board = read_map(configs)
+    new_board = Board(configs)
 
     load_gamestate!(new_game, new_board)
     @test game.devcards == new_game.devcards
@@ -259,7 +257,7 @@ end
 end
 
 @testitem "do_turn" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
     players = Vector{PlayerType}([player1, player2])
@@ -270,7 +268,7 @@ end
 end
 
 @testitem "robber" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
     players = Vector{PlayerType}([player1, player2])
@@ -298,7 +296,7 @@ end
 end
 
 @testitem "max_construction" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     for i in 1:(configs["GameSettings"]["MaxComponents"]["SETTLEMENT"]-1)
         BoardApi.build_settlement!(board, :Test1, BoardApi.get_admissible_settlement_locations(board, player1.player.team, true)[1])
@@ -337,7 +335,7 @@ end
         end
     end
 
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
     players = Vector{PlayerType}([player1, player2])
@@ -368,7 +366,7 @@ end
 end
 
 @testitem "largest_army" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
     players = Vector{PlayerType}([player1, player2])
@@ -421,14 +419,14 @@ end
 end
 
 @testitem "longest_road1" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player_blue = DefaultRobotPlayer(:Blue, configs)
     player_green = DefaultRobotPlayer(:Green, configs)
     players = Vector{PlayerType}([player_blue, player_green])
 end
 
 @testitem "longest_road" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player_blue = DefaultRobotPlayer(:Blue, configs)
     player_green = DefaultRobotPlayer(:Green, configs)
     players = Vector{PlayerType}([player_blue, player_green])
@@ -500,7 +498,7 @@ end
 end
 
 @testitem "ports" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
     game = Game(Vector{PlayerType}([player1, player2]), configs)
@@ -525,7 +523,7 @@ end
 end
 
 @testitem "human_player" setup=[global_test_setup] tags=[:broken, :skipactions] begin
-    board = read_map(configs)
+    board = Board(configs)
     player1 = HumanPlayer(:Test1, open("human_test_player1.txt", "r"))
     player2 = HumanPlayer(:Test2, open("human_test_player2.txt", "r"))
     players = Vector{PlayerType}([player1, player2])
@@ -540,7 +538,7 @@ end
     configs_2 = deepcopy(configs)
     configs_2["SAVE_MAP"] = configs["MAP_FILE_2"]
     configs_2["LOAD_MAP"] = configs["MAP_FILE_2"]
-    board = read_map(configs_2)
+    board = Board(configs_2)
 
     @test board.resources[:Pasture] == 25
     @test board.resources[:Brick] == 25
@@ -598,7 +596,7 @@ end
     @test length(BoardApi.get_neighbors((3,11))) == 2
     @test length(BoardApi.get_neighbors((4,1))) == 2
 
-    board = read_map(configs)
+    board = Board(configs)
     BoardApi.build_settlement!(board, :Test1, (1,1))
     BoardApi.build_road!(board, :Test1, (1,1),(1,2))
     @test BoardApi.is_valid_settlement_placement(board, :Test1, (1,2)) == false
@@ -623,7 +621,7 @@ end
 end
 
 @testitem "call_api" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
     players = Vector{PlayerType}([player1, player2])
@@ -698,7 +696,7 @@ end
 
 
 @testitem "assign_largest_army" setup=[global_test_setup] begin
-    board = Catan.read_map(configs)
+    board = Board(configs)
     player_blue = Catan.DefaultRobotPlayer(:Blue, configs)
     player_green = DefaultRobotPlayer(:Green, configs)
     players = Vector{PlayerType}([player_blue, player_green])
@@ -743,7 +741,7 @@ end
 end
 
 @testitem "trading" setup=[global_test_setup] begin
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
     players = Vector{PlayerType}([player1, player2])
@@ -758,7 +756,7 @@ end
 @testitem "handle_dice_roll_robber" setup=[global_test_setup] begin
     #function test_handle_dice_roll_robber(configs)
     #configs = parse_configs("Configuration.toml")
-    board = read_map(configs)
+    board = Board(configs)
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
     player3 = DefaultRobotPlayer(:Test3, configs)
