@@ -177,7 +177,8 @@ function generate_random_map(io::IO)::Nothing
     return
 end
 function generate_random_map()::String
-    io = generate_random_map(IOBuffer())
+    io = IOBuffer()
+    generate_random_map(io)
     map_str = String(take!(io))
     close(io)
     return map_str
