@@ -108,7 +108,9 @@ function test_player_implementation(T::Type, configs) #where {T <: PlayerType}
     PlayerApi.give_resource!(player.player, :Grain)
     settlement_candidates = BoardApi.get_admissible_settlement_locations(board, player.player.team, true)
     devcards = Dict([:Knight => 2])
-    player.player.devcards = devcards
+    PlayerApi.add_devcard!(player.player, :Knight)
+    PlayerApi.add_devcard!(player.player, :Knight)
+    #player.player.devcards = devcards
 
     choose_accept_trade(board, player, from_player, from_goods, to_goods)
     coord = choose_building_location(board, players, player, settlement_candidates, :Settlement, true)

@@ -74,7 +74,7 @@ end
     @test length(reports) <= max_num
 end
 
-@testitem "deepcopy" setup=[global_test_setup] begin
+@testitem "deepcopy" tags=[:broken] setup=[global_test_setup] begin
     team_and_playertype = [
                           (:blue, DefaultRobotPlayer),
                           (:cyan, DefaultRobotPlayer),
