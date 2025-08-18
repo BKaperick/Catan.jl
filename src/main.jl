@@ -174,8 +174,8 @@ end
 function harvest_resources(board, players, dice_value)
     # Dict of resource -> (player -> count)
     resource_to_harvest_targets = Dict([(r, Vector{Tuple{Player, Symbol}}()) for r in RESOURCES]) 
-    for tile in board.dicevalue_to_tiles[dice_value]
-        resource = board.tile_to_resource[tile]
+    for tile in board.map.dicevalue_to_tiles[dice_value]
+        resource = board.map.tile_to_resource[tile]
         # Don't harvest Desert, and don't harvest the robber resource
         if tile == board.robber_tile || resource == :Desert
             continue

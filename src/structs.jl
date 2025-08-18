@@ -39,10 +39,7 @@ end
 # (2) Create a function to reset a board to the initial game state.
 # (3) Both - separate out Map, copy()ing just re-uses Map, and a function to reset
 mutable struct Board
-    tile_to_dicevalue::Dict{Symbol,Int8}
-    #dicevalue_to_coords::Dict{Symbol,Int}
-    dicevalue_to_tiles::Dict{Int8,Vector{Symbol}}
-    tile_to_resource::Dict{Symbol,Symbol}
+    map::Map
     coord_to_building::Dict{Tuple{Int8,Int8},Building}
     coord_to_roads::Dict{Tuple{Int8, Int8}, Set{Road}}
     coord_to_road_teams::Dict{Tuple{Int8, Int8}, Set{Symbol}}
@@ -60,12 +57,14 @@ mutable struct Board
 end
 
 struct Map
+    tile_to_dicevalue::Dict{Symbol,Int8}
+    dicevalue_to_tiles::Dict{Int8,Vector{Symbol}}
+    tile_to_resource::Dict{Symbol,Symbol}
 end
 
-Board(tile_to_value::Dict, dicevalue_to_tiles::Dict, tile_to_resource::Dict, 
-      robber_tile::Symbol, coord_to_port::Dict, configs::Dict) = Board(tile_to_value, 
-      dicevalue_to_tiles, tile_to_resource, Dict(), Dict(), Dict(), coord_to_port, 
-      [], [], Dict(), robber_tile, 
+Board(map::Map,
+      robber_tile::Symbol, coord_to_port::Dict, configs::Dict) = Board(map, Dict(), Dict(), Dict(), 
+      coord_to_port, [], [], Dict(), robber_tile, 
       BoardApi.initialize_empty_board(), 
       Dict([(r, configs["GameSettings"]["MaxComponents"]["RESOURCE"]) for r in RESOURCES]), 
       nothing, nothing, configs)
@@ -73,11 +72,8 @@ Board(csvfile) = BoardApi.Board(csvfile)
 
 function Base.copy(board::Board)
     return Board(
-                 copy(board.tile_to_dicevalue),
-                 copy(board.dicevalue_to_tiles),
-                 copy(board.tile_to_resource),
+                 board.map,
                  copy(board.coord_to_building),
-                 #copy(board.coord_to_roads),
                  Dict([k=>copy(v) for (k,v) in board.coord_to_roads]),
                  copy(board.coord_to_road_teams),
                  copy(board.coord_to_port),

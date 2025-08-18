@@ -26,7 +26,7 @@ function random_sample_resources(resources::Dict{Symbol, Int}, count, replace=fa
 end
 
 function get_random_tile(board)::Symbol
-    candidates = [keys(board.tile_to_dicevalue)...]
+    candidates = [keys(board.map.tile_to_dicevalue)...]
     return sample(candidates, 1)[1]
 end
 

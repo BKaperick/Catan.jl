@@ -525,7 +525,7 @@ function get_public_vp_count(board::Board, team::Symbol)::Int
 end
 
 function get_admissible_robber_tiles(board::Board)::Vector{Symbol}
-    [t for t in keys(board.tile_to_dicevalue) if t != board.robber_tile]
+    [t for t in keys(board.map.tile_to_dicevalue) if t != board.robber_tile]
 end
 
 function can_draw_resource(board::Board, resource::Symbol)

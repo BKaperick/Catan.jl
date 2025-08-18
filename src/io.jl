@@ -108,16 +108,17 @@ function read_map(configs::Dict, map_str::String)::Board
     end
 
     @debug dicevalue_to_tiles
-    board = Board(tile_to_dicevalue, dicevalue_to_tiles, tile_to_resource, desert_tile, coord_to_port, configs)
-    @assert length(keys(board.tile_to_dicevalue)) == length(keys(TILE_TO_COORDS)) # 17
-    t = sum(values(board.tile_to_dicevalue))
-    @assert sum(values(board.tile_to_dicevalue)) == 133 "Sum of dice values is $(t) instead of 133"
-    @assert length([r for r in values(board.tile_to_resource) if r == :Wood]) == RESOURCE_TO_COUNT[:Wood]
-    @assert length([r for r in values(board.tile_to_resource) if r == :Stone]) == RESOURCE_TO_COUNT[:Stone]
-    @assert length([r for r in values(board.tile_to_resource) if r == :Grain]) == RESOURCE_TO_COUNT[:Grain]
-    @assert length([r for r in values(board.tile_to_resource) if r == :Brick]) == RESOURCE_TO_COUNT[:Brick]
-    @assert length([r for r in values(board.tile_to_resource) if r == :Pasture]) == RESOURCE_TO_COUNT[:Pasture]
-    @assert length([r for r in values(board.tile_to_resource) if r == :Desert]) == RESOURCE_TO_COUNT[:Desert]
+    map = Map(tile_to_dicevalue, dicevalue_to_tiles, tile_to_resource)
+    board = Board(map, desert_tile, coord_to_port, configs)
+    @assert length(keys(board.map.tile_to_dicevalue)) == length(keys(TILE_TO_COORDS)) # 17
+    t = sum(values(board.map.tile_to_dicevalue))
+    @assert sum(values(board.map.tile_to_dicevalue)) == 133 "Sum of dice values is $(t) instead of 133"
+    @assert length([r for r in values(board.map.tile_to_resource) if r == :Wood]) == RESOURCE_TO_COUNT[:Wood]
+    @assert length([r for r in values(board.map.tile_to_resource) if r == :Stone]) == RESOURCE_TO_COUNT[:Stone]
+    @assert length([r for r in values(board.map.tile_to_resource) if r == :Grain]) == RESOURCE_TO_COUNT[:Grain]
+    @assert length([r for r in values(board.map.tile_to_resource) if r == :Brick]) == RESOURCE_TO_COUNT[:Brick]
+    @assert length([r for r in values(board.map.tile_to_resource) if r == :Pasture]) == RESOURCE_TO_COUNT[:Pasture]
+    @assert length([r for r in values(board.map.tile_to_resource) if r == :Desert]) == RESOURCE_TO_COUNT[:Desert]
     return board
 end
 
