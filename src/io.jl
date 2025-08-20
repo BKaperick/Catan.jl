@@ -315,7 +315,7 @@ end
 
 function load_gamestate!(game, board)
     file = game.configs["SAVE_FILE"]
-    if isfile(file) #~isdir(file)
+    if isfile(file) && game.configs["SAVE_GAME_TO_FILE"] == true
         @info "Loading game from file $file"
         for line in readlines(file)
             parse_and_execute_api_call(game, board, line)
