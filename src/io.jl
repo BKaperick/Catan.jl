@@ -381,6 +381,7 @@ function do_post_game_action(game::Game, board::Board, players::AbstractVector{T
     if winner isa PlayerType
         #print_winner(board, winner)
     end
+    
     for player in players
         do_post_game_action(game, board, players, player, winner)
     end

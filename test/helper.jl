@@ -152,6 +152,10 @@ function doset(ti)
     if length(ARGS) == 0
         return true
     end
+    if ARGS[1] == "fast" 
+        return !(:slow in ti.tags)
+    end
+
     for a in ARGS
         if occursin(lowercase(a), lowercase(desc))
             return true
