@@ -101,6 +101,8 @@ function _parse_action(io, descriptor, configs::Dict)::ChosenAction
             return ChosenAction(func)
         elseif fname == "pd"
             return ChosenAction(func, (_parse_devcard_symbol(out_str[2], configs)))
+        elseif fname == "tb"
+            return ChosenAction(func, (_parse_devcard_symbol(out_str[1], configs), _parse_devcard_symbol(out_str[2], configs)))
         else
             return ChosenAction(func)
         end

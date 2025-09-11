@@ -19,7 +19,8 @@ PLAYER_ACTIONS = Dict([
 
     # Probabilistic actions
     :BuyDevCard             => act_buy_devcard,
-    :PlaceRobber            => do_robber_move_theft 
+    :PlaceRobber            => do_robber_move_theft ,
+    :TradeWithBank          => trade_resource_with_bank
    ])
 
 
@@ -29,6 +30,15 @@ ACTIONS_DICTIONARY = Dict(
     :ConstructSettlement => construct_settlement
    )
 """
+
+
+function do_trade_with_bank(board, player, from::Symbol, to::Symbol)
+    if BoardApi.has_enough_resources(board, to)
+        PlayerApi.trade_resource_with_bank(player.player, card, from, to)
+    else
+        @debug "Not enough resources to trade with bank (missing sufficient $to)"
+    end
+end
 
 #
 # CONSTRUCTION ACTIONS
@@ -248,6 +258,18 @@ function get_legal_actions(game, board, player::Player)::Set{PreAction}
     if PlayerApi.has_any_resources(player)
         push!(actions, PreAction(:ProposeTrade))
     end
+    for from_resource = PlayerApi.resources_to_trade_with_bank(player)
+        trade_args = []
+        for to_resource in RESOURCES
+            if from_resource == to_resource || !BoardApi.can_draw_resource(board, to_resource)
+                continue
+            end
+            push!(trade_args, (from_resource, to_resource))
+        end
+    end
+    if length(trade_args) > 0
+        push!(actions, PreAction(:TradeWithBank, trade_args))
+    end
     return actions
 end
 
@@ -256,6 +278,7 @@ action_construct_settlement(g::Game, b::Board, p::PlayerType, coord, first_turn)
 action_construct_road(g::Game, b::Board, p::PlayerType, coord1, coord2, do_pay_cost) = construct_road(b, p.player, coord1, coord2, do_pay_cost)
 action_buy_devcard(g::Game, b::Board, p::PlayerType) = draw_devcard(g, b, p.player)
 action_play_devcard(g::Game, b::Board, p::PlayerType, card::Symbol) = do_play_devcard(b, g.players, p, card)
+action_trade_with_bank(g::Game, b::Board, p::PlayerType, from_resource::Symbol, to_resource::Symbol) = do_trade_with_bank(b, p, from_resource, to_resource)
 action_propose_trade_goods(g::Game, b::Board, p::PlayerType, rand_resource_from::Vector{Symbol}, rand_resource_to::Vector{Symbol}) = propose_trade_goods(b, g.players, p, rand_resource_from, rand_resource_to)
 action_do_nothing(g::Game, b::Board, p::PlayerType) = Returns(nothing)
 
@@ -266,5 +289,6 @@ const ACTIONS_DICTIONARY = Dict(
     :BuyDevCard => action_buy_devcard,
     :PlayDevCard => action_play_devcard,
     :ProposeTrade => action_propose_trade_goods,
-    :DoNothing => action_do_nothing
+    :DoNothing => action_do_nothing,
+    :TradeWithBank => action_trade_with_bank
    )
