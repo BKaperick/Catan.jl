@@ -38,7 +38,7 @@ end
 function get_random_resource()
     return sample(collect(RESOURCES))
 end
-function get_random_other_resource(skip::Resource)
+function get_random_other_resource(skip::Symbol)
     resources = copy(RESOURCES)
     pop!(resources, skip)
     return sample(collect(resources))

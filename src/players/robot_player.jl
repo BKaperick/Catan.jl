@@ -159,9 +159,8 @@ function choose_next_action(board::Board, players::AbstractVector{PlayerPublicVi
         end            
     end
     if name == :TradeWithBank
-        from_resource = sample(candidates)
-        to_resource = get_random_other_resource(from_resource)
-        return ChosenAction(name, from_resource, to_resource)
+        resource_pair = sample(candidates)
+        return ChosenAction(name, resource_pair...)
 
     end
     if name == :ProposeTrade
@@ -171,7 +170,7 @@ function choose_next_action(board::Board, players::AbstractVector{PlayerPublicVi
             #sampled = random_sample_resources(player.player.resources, 1)
             #rand_resource_from = [sampled...]
             
-            rand_resource_to = [get_random_other_resource(rand_resource_from)]
+            rand_resource_to = [get_random_other_resource(rand_resource_from[1])]
             return ChosenAction(name, rand_resource_from, rand_resource_to)
             #return (g, b, p) -> propose_trade_goods(b, g.players, p, rand_resource_from, rand_resource_to)
         end

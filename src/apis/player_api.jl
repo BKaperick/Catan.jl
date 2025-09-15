@@ -144,7 +144,7 @@ function resources_to_trade_with_bank(player::Player)::Vector{Symbol}
     resources = Vector{Symbol}()
     for (r,amt) in player.resources
         if amt >= player.ports[r]
-            append!(resources, amt)
+            push!(resources, r)
         end
     end
     return resources

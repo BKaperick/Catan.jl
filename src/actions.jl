@@ -33,8 +33,8 @@ ACTIONS_DICTIONARY = Dict(
 
 
 function do_trade_with_bank(board, player, from::Symbol, to::Symbol)
-    if BoardApi.has_enough_resources(board, to)
-        PlayerApi.trade_resource_with_bank(player.player, card, from, to)
+    if BoardApi.can_draw_resource(board, to)
+        PlayerApi.trade_resource_with_bank(player.player, from, to)
     else
         @debug "Not enough resources to trade with bank (missing sufficient $to)"
     end
@@ -258,8 +258,8 @@ function get_legal_actions(game, board, player::Player)::Set{PreAction}
     if PlayerApi.has_any_resources(player)
         push!(actions, PreAction(:ProposeTrade))
     end
+    trade_args = Vector{Tuple}([])
     for from_resource = PlayerApi.resources_to_trade_with_bank(player)
-        trade_args = []
         for to_resource in RESOURCES
             if from_resource == to_resource || !BoardApi.can_draw_resource(board, to_resource)
                 continue
