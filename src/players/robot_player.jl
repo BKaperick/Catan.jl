@@ -28,7 +28,7 @@ function choose_road_location(board::Board, players::AbstractVector{PlayerPublic
     return sample(candidates)
 end
 
-"""sample
+"""
     choose_building_location(board::Board, players::AbstractVector{PlayerPublicView}, 
     player::RobotPlayer, candidates::Vector{Tuple{Int, Int}}, building_type::Symbol
     )::Tuple{Int,Int}
@@ -161,7 +161,6 @@ function choose_next_action(board::Board, players::AbstractVector{PlayerPublicVi
     if name == :TradeWithBank
         resource_pair = sample(candidates)
         return ChosenAction(name, resource_pair...)
-
     end
     if name == :ProposeTrade
         # We add an additional random filter here to avoid extremely long, uninteresting trade negotiations between DefaultRobotPlayers.

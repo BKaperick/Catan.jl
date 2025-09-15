@@ -784,7 +784,31 @@ end
     Catan.test_player_implementation(HumanPlayer, configs)
 end
 
-function run_tests(neverend = false)
+@testitem "trading_with_bank" setup=[global_test_setup] begin
+
+    player = DefaultRobotPlayer(:Blue, configs)
+    board = Board(configs)::Board
+
+    PlayerApi.give_resource!(player.player, :Brick)
+    PlayerApi.give_resource!(player.player, :Brick)
+    PlayerApi.add_port!(player.player, :Brick)
+    Catan.do_trade_with_bank(board, player, :Brick, :Stone)
+
+    @test player.player.ports[:Brick] == 2
+    @test player.player.resources[:Brick] == 0
+    @test player.player.resources[:Stone] == 1
+
+    PlayerApi.give_resource!(player.player, :Stone)
+    PlayerApi.give_resource!(player.player, :Stone)
+    PlayerApi.give_resource!(player.player, :Stone)
+    Catan.do_trade_with_bank(board, player, :Stone, :Wood)
+
+    @test player.player.resources[:Stone] == 0
+    @test player.player.resources[:Wood] == 1
+
+end
+
+function run_tests()
     ~ispath("data") && mkdir("data")
     io = open("_tmp_Configuration.toml", "w");
     write(io, """SAVE_GAME_TO_FILE = true
@@ -877,4 +901,4 @@ S,9,s
     close(io)
 end
 
-run_tests(false)
+run_tests()
