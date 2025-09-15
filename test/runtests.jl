@@ -779,7 +779,7 @@ end
 end
 
 @testitem "human_player_implementation" setup=[global_test_setup] begin
-    commands = open("data/commands.txt", "r")
+    commands = open("commands.txt", "r")
     Catan.test_human_player_implementation(commands, configs)
     close(commands)
 end
