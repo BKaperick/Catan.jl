@@ -12,7 +12,7 @@ macro safeparse(ex)
         end
     end
 end
-function parse_generic(io::IO, descriptor, configs::Dict, parsing_func, reminder = nothing)
+function _parse_generic(io::IO, descriptor, configs::Dict, parsing_func, reminder = nothing)
     x = nothing
     while x === nothing
         if reminder !== nothing
@@ -33,24 +33,24 @@ function input(io::IO, prompt::AbstractString, configs::Dict)
     return response
 end
 
-parse_teams(io, desc, configs::Dict)           = parse_generic(io, desc, configs::Dict, _parse_teams)
-parse_team(io, desc, configs::Dict)            = parse_generic(io, desc, configs::Dict, _parse_symbol)
-parse_tile(io, desc, configs::Dict)            = parse_generic(io, desc, configs::Dict, _parse_tile)
-parse_yesno(io, desc, configs::Dict)           = parse_generic(io, desc, configs::Dict, _parse_yesno)
-parse_road_coord(io, desc, configs::Dict)      = parse_generic(io, desc, configs::Dict, _parse_road_coord)
-parse_resources_str(io, desc, configs::Dict)   = parse_generic(io, desc, configs::Dict, _parse_resources_str)
-parse_resources(io, desc, configs::Dict)       = parse_generic(io, desc, configs::Dict, _parse_resources)
-parse_devcard(io, desc, configs::Dict)         = parse_generic(io, desc, configs::Dict, _parse_devcard)
-parse_int(io, desc, configs::Dict)             = parse_generic(io, desc, configs::Dict, _parse_int)
-parse_ints(io, desc, configs::Dict)            = parse_generic(io, desc, configs::Dict, _parse_ints)
-parse_action(io, desc, configs::Dict)          = parse_generic(io, desc, configs::Dict, _parse_action)
+parse_teams(io, desc, configs::Dict)           = _parse_generic(io, desc, configs::Dict, _parse_teams)
+parse_team(io, desc, configs::Dict)            = _parse_generic(io, desc, configs::Dict, _parse_symbol)
+parse_tile(io, desc, configs::Dict)            = _parse_generic(io, desc, configs::Dict, _parse_tile)
+parse_yesno(io, desc, configs::Dict)           = _parse_generic(io, desc, configs::Dict, _parse_yesno)
+parse_road_coord(io, desc, configs::Dict)      = _parse_generic(io, desc, configs::Dict, _parse_road_coord)
+parse_resources_str(io, desc, configs::Dict)   = _parse_generic(io, desc, configs::Dict, _parse_resources_str)
+parse_resources(io, desc, configs::Dict)       = _parse_generic(io, desc, configs::Dict, _parse_resources)
+parse_devcard(io, desc, configs::Dict)         = _parse_generic(io, desc, configs::Dict, _parse_devcard)
+parse_int(io, desc, configs::Dict)             = _parse_generic(io, desc, configs::Dict, _parse_int)
+parse_ints(io, desc, configs::Dict)            = _parse_generic(io, desc, configs::Dict, _parse_ints)
+parse_action(io, desc, configs::Dict)          = _parse_generic(io, desc, configs::Dict, _parse_action)
 
 _parse_symbol(desc, configs::Dict) = _parse_symbol(stdin, desc, configs)
 function _parse_symbol(io, desc, configs::Dict)
     return Symbol(input(io, desc, configs))
 end
 
-function _parse_devcard_symbol(desc::AbstractString, configs::Dict)
+function _parse_devcard_symbol(desc::AbstractString)
     return HUMAN_DEVCARD_TO_SYMBOL[uppercase(string(desc[1]))]
 end
 
@@ -69,43 +69,46 @@ function _parse_yesno(io, desc, configs::Dict)
 end
 
 function _parse_action(io, descriptor, configs::Dict)::ChosenAction
-    while true
+    action = nothing
+    while isnothing(action)
         human_response = lowercase(input(io, descriptor, configs::Dict))
-        #=
-        if (human_response[1] == 'e')
-            return (:DoNothing,)
-        end
-        =#
-        out_str = split(human_response, " ")
-        fname = out_str[1]
-        
-        func = HUMAN_ACTIONS[fname]
+        action = _parse_action_from_response(human_response)
+    end
+    return action
+end
 
-        if fname == "bs" || fname == "bc"
-            human_coords = out_str[2]
-            @info human_coords
-            return ChosenAction(func, (get_coord_from_human_tile_description(human_coords),))
-        elseif fname == "br"
-            human_coords = out_str[2]
-            @info human_coords
-            @info [get_road_coords_from_human_tile_description(human_coords)]
-            return ChosenAction(func, (get_road_coords_from_human_tile_description(human_coords)..., true))
-        elseif fname == "pt" # pt 2 w w g g
-            amount_are_mine = parse(Int, out_str[2])
-            goods = join(out_str[3:end], " ")
-            parsed_goods = [_parse_resources_str(goods)...]
-            from_goods = parsed_goods[1:amount_are_mine]
-            to_goods = parsed_goods[(amount_are_mine+1):end]
-            return ChosenAction(func, (from_goods, to_goods))
-        elseif fname == "bd"
-            return ChosenAction(func)
-        elseif fname == "pd"
-            return ChosenAction(func, (_parse_devcard_symbol(out_str[2], configs)))
-        elseif fname == "tb"
-            return ChosenAction(func, (_parse_devcard_symbol(out_str[1], configs), _parse_devcard_symbol(out_str[2], configs)))
-        else
-            return ChosenAction(func)
-        end
+function _parse_action_from_response(human_response::AbstractString)::ChosenAction
+    out_str = split(human_response, " ")
+    fname = out_str[1]
+    
+    func = HUMAN_ACTIONS[fname]
+
+    if fname == "bs" || fname == "bc"
+        human_coords = out_str[2]
+        @info human_coords
+        return ChosenAction(func, (get_coord_from_human_tile_description(human_coords),))
+    elseif fname == "br"
+        human_coords = out_str[2]
+        @info human_coords
+        @info [get_road_coords_from_human_tile_description(human_coords)]
+        return ChosenAction(func, (get_road_coords_from_human_tile_description(human_coords)..., true))
+    elseif fname == "pt" # pt 2 w w g g
+        amount_are_mine = parse(Int, out_str[2])
+        goods = join(out_str[3:end], " ")
+        parsed_goods = [_parse_resources_str(goods)...]
+        from_goods = parsed_goods[1:amount_are_mine]
+        to_goods = parsed_goods[(amount_are_mine+1):end]
+        return ChosenAction(func, (from_goods, to_goods))
+    elseif fname == "bd"
+        return ChosenAction(func)
+    elseif fname == "pd"
+        return ChosenAction(func, (_parse_devcard_symbol(out_str[2])))
+    elseif fname == "tb"
+        goods = join(out_str[2:end], " ")
+        parsed_goods = [_parse_resources_str(goods)...]
+        return ChosenAction(func, (parsed_goods[1], parsed_goods[2],))
+    else
+        return ChosenAction(func)
     end
 end
 

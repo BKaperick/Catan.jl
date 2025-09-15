@@ -85,20 +85,25 @@ function test_automated_game(neverend, players, configs::Dict)
     end
 end
 
-function test_player_implementation(T::Type, configs) #where {T <: PlayerType}
+function test_player_implementation(T::Type, configs)
+    _test_player_implementation(T(:Blue, configs), configs)
+end
+
+function test_human_player_implementation(command_io, configs)
+    _test_player_implementation(HumanPlayer(Player(:Blue, configs), command_io), configs)
+end
+
+function _test_player_implementation(player::PlayerType, configs) #where {T <: PlayerType}
     private_players = [
-                       T(:Blue, configs)::PlayerType,
+            player,
                DefaultRobotPlayer(:Cyan, configs),
                DefaultRobotPlayer(:Yellow, configs),
                DefaultRobotPlayer(:Red, configs)
               ]
 
-    player = private_players[1]
     players = PlayerPublicView.(private_players)
-    game = Game(private_players, configs)
     board = Board(configs)::Board
     from_player = players[2]
-    #actions = Catan.ALL_ACTIONS
     actions = Set([PreAction(:BuyDevCard)])
 
     from_goods = [:Wood]
