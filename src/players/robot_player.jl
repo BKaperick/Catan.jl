@@ -158,6 +158,10 @@ function choose_next_action(board::Board, players::AbstractVector{PlayerPublicVi
             return ChosenAction(name, card)
         end            
     end
+    if name == :TradeWithBank
+        resource_pair = sample(candidates)
+        return ChosenAction(name, resource_pair...)
+    end
     if name == :ProposeTrade
         # We add an additional random filter here to avoid extremely long, uninteresting trade negotiations between DefaultRobotPlayers.
         if rand() > .8 && sum(values(player.player.resources)) > 0
@@ -165,10 +169,7 @@ function choose_next_action(board::Board, players::AbstractVector{PlayerPublicVi
             #sampled = random_sample_resources(player.player.resources, 1)
             #rand_resource_from = [sampled...]
             
-            rand_resource_to = [get_random_resource()]
-            while rand_resource_to[1] == rand_resource_from[1]
-                rand_resource_to = [get_random_resource()]
-            end
+            rand_resource_to = [get_random_other_resource(rand_resource_from[1])]
             return ChosenAction(name, rand_resource_from, rand_resource_to)
             #return (g, b, p) -> propose_trade_goods(b, g.players, p, rand_resource_from, rand_resource_to)
         end

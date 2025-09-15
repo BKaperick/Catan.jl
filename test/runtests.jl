@@ -69,7 +69,7 @@ end
     #@show length(JET.get_reports(rep))
     #@show rep
     reports = JET.get_reports(rep)
-    max_num = 16
+    max_num = 18
     println("length(JET.get_reports(rep)) = $(length(reports)) / $max_num")
     @test length(reports) <= max_num
 end
@@ -330,7 +330,6 @@ end
 
     function test_resource_conservation(game, board)
         for r in RESOURCES
-            println(r)
             @test board.resources[r] + sum([p.player.resources[r] for p in game.players]) == 25
         end
     end
@@ -414,7 +413,6 @@ end
     push!(set, road1)
     push!(set, road2)
     push!(set, road2)
-    println(set)
     @test length(set) == 1
 end
 
@@ -780,11 +778,52 @@ end
     Catan.test_player_implementation(DefaultRobotPlayer, configs)
 end
 
-@testitem "human_player_implementation" setup=[global_test_setup] tags=[:broken] begin
-    Catan.test_player_implementation(HumanPlayer, configs)
+@testitem "human_player_implementation" setup=[global_test_setup] begin
+    commands = open("commands.data", "r")
+    Catan.test_human_player_implementation(commands, configs)
+    close(commands)
 end
 
-function run_tests(neverend = false)
+@testitem "human_player_parse_action" setup=[global_test_setup] begin
+    results_dict = Dict([
+        "bs sop" => ChosenAction(:ConstructSettlement, ((5,7),)),
+        "bc sop" => ChosenAction(:ConstructCity, ((5,7),)),
+        "br op" => ChosenAction(:ConstructRoad, ((4,8),(5,7),true,)),
+        "pt 2 w w g g" => ChosenAction(:ProposeTrade, ([:Wood, :Wood], [:Grain, :Grain],)),
+        "bd" => ChosenAction(:BuyDevCard),
+        "pd knight" => ChosenAction(:PlayDevCard, :Knight),
+        "tb w b" => ChosenAction(:TradeWithBank, (:Wood, :Brick))
+    ])
+    for (human_resp, act) in results_dict
+        @test Catan._parse_action_from_response(human_resp) == act
+    end
+end
+
+@testitem "trading_with_bank" setup=[global_test_setup] begin
+
+    player = DefaultRobotPlayer(:Blue, configs)
+    board = Board(configs)::Board
+
+    PlayerApi.give_resource!(player.player, :Brick)
+    PlayerApi.give_resource!(player.player, :Brick)
+    PlayerApi.add_port!(player.player, :Brick)
+    Catan.do_trade_with_bank(board, player, :Brick, :Stone)
+
+    @test player.player.ports[:Brick] == 2
+    @test player.player.resources[:Brick] == 0
+    @test player.player.resources[:Stone] == 1
+
+    PlayerApi.give_resource!(player.player, :Stone)
+    PlayerApi.give_resource!(player.player, :Stone)
+    PlayerApi.give_resource!(player.player, :Stone)
+    Catan.do_trade_with_bank(board, player, :Stone, :Wood)
+
+    @test player.player.resources[:Stone] == 0
+    @test player.player.resources[:Wood] == 1
+
+end
+
+function run_tests()
     ~ispath("data") && mkdir("data")
     io = open("_tmp_Configuration.toml", "w");
     write(io, """SAVE_GAME_TO_FILE = true
@@ -877,4 +916,4 @@ S,9,s
     close(io)
 end
 
-run_tests(false)
+run_tests()

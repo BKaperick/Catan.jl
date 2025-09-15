@@ -115,6 +115,10 @@ struct ChosenAction
     ChosenAction(name::Symbol, args...) = new(name, args)
 end
 
+function Base.:(==)(a::ChosenAction, b::ChosenAction)
+    a.name == b.name && a.args == b.args
+end
+
 function Base.show(io::IO, a::ChosenAction)
     compact = get(io, :compact, false)
     if length(a.args) == 0
