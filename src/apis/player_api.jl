@@ -56,7 +56,7 @@ function get_admissible_devcards_with_counts(player::Player)::Dict{Symbol, Int8}
     return Dict((c,cc) for (c,cc) in out if cc > 0)
 end
 function trade_resource_with_bank(player::Player, from_resource, to_resource)
-    rate = player.ports[from_resource]
+    rate = get(player.ports, from_resource, 4)
     for r in 1:rate
         take_resource!(player, from_resource)
     end
@@ -143,7 +143,7 @@ end
 function resources_to_trade_with_bank(player::Player)::Vector{Symbol}
     resources = Vector{Symbol}()
     for (r,amt) in player.resources
-        if amt >= player.ports[r]
+        if amt >= get(player.ports, r, 4)
             push!(resources, r)
         end
     end
@@ -183,17 +183,18 @@ function add_port!(player::Player, resource::Symbol)
     _add_port!(player, resource)
 end
 function _add_port!(player::Player, resource::Symbol)
-    if haskey(player.ports, resource)
-        player.ports[resource] = 2
-
-    # Alternative is that this port is a 3:1 universal, so we change any exchange rates of 4 to 3
-    else
-        for (k,v) in player.ports
-            if v == 4
-                player.ports[k] = 3
+    # :All means that this port is a 3:1 universal, so we change any exchange rates of 4 to 3
+    if resource == :All
+        for r in RESOURCES
+            if ~haskey(player.ports, r)
+                player.ports[r] = 3
             end
         end
+    else
+        player.ports[resource] = 2
     end
+
+    
 end
 
 function give_resource!(player::Player, resource::Symbol)
@@ -234,7 +235,6 @@ should have already been done before, hence the aggressive `@assert` if the
 payment fails due to lack of resources.
 """
 function pay_price!(player::Player, cost::Dict)
-    resources = keys(cost)
     for (r,amount) in cost
         b = discard_cards!(player, repeat([r], amount)...)
         @assert b
@@ -245,4 +245,14 @@ function pay_construction(player::Player, construction::Symbol)
     cost = COSTS[construction]
     pay_price!(player, cost)
 end
+
+function reset_player!(player::Player)
+    empty!(player.resources)
+    empty!(player.ports)
+    empty!(player.devcards)
+    empty!(player.devcards_used)
+    player.played_devcard_this_turn = false
+    player.bought_devcard_this_turn = nothing
+end
+
 end

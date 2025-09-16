@@ -7,7 +7,8 @@ using ..Catan: Game, Board, PlayerType, HumanPlayer, Player, PlayerPublicView, P
                COORD_TO_TILES, COSTS, RESOURCES, generate_random_map, ACTIONS_DICTIONARY,
                action_construct_city, action_construct_settlement,
                action_construct_road, action_buy_devcard, action_play_devcard,
-               action_propose_trade_goods, action_do_nothing
+               action_propose_trade_goods, action_do_nothing,
+               get_player_config
 
 using ..Catan.BoardApi
 using ..Catan.PlayerApi
@@ -85,6 +86,12 @@ function do_game(game::Game, board::Board)::Union{PlayerType, Nothing}
 
     # Post game steps (writing features, updating models, etc)
     do_post_game_action(game, board, game.players, winner);
+
+    for player in game.players
+        if get_player_config(game.configs, "RESET_AFTER_GAME", player.player.team)
+            PlayerApi.reset_player!(player.player)
+        end
+    end
     
     return winner
 end

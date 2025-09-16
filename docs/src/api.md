@@ -18,7 +18,9 @@ end
 To let it interact with the `Catan.jl` framework, it must have a constructor accepting `(team::Symbol, configs::Dict)`, and it must be registered.  Continuing with our above example,
 ```julia
 NewRobotPlayer(team::Symbol, configs::Dict) = NewRobotPlayer(Player(team, configs))
-Catan.add_player_to_register("New Robot Player Experiment", (t,c) -> NewRobotPlayer(t,c))
+Catan.add_player_to_register("New Robot Player Experiment", 
+(t,c) -> NewRobotPlayer(t,c),
+p -> NewRobotPlayer(p))
 ```
 
 and now it can be used in gameplay by configuring the player in the configuration TOML file,

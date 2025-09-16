@@ -17,24 +17,10 @@ mutable struct Player
 end
 
 function Player(team::Symbol, configs::Dict)
-    default_ports = Dict([
-    :Wood => 4
-    :Stone => 4
-    :Grain => 4
-    :Brick => 4
-    :Pasture => 4
-    ])
-    return Player(team, configs, Dict([(r,Int8(0)) for r in RESOURCES]))
+    return Player(team, configs, Dict{Symbol,Int8}())
 end
 function Player(team::Symbol, configs::Dict, resources::Dict{Symbol, Int8})
-    default_ports = Dict([
-    :Wood => 4
-    :Stone => 4
-    :Grain => 4
-    :Brick => 4
-    :Pasture => 4
-    ])
-    return Player(resources, Dict(), team, Dict(), default_ports, false, nothing, configs)
+    return Player(resources, Dict(), team, Dict(), Dict{Symbol,Int8}(), false, nothing, configs)
 end
 
 
@@ -123,7 +109,7 @@ function print_player_dashboard(p::PlayerType)
     end
 end
 
-
+HumanPlayer(player::Player) = HumanPlayer(player, stdin)
 HumanPlayer(team::Symbol, io::IO, configs::Dict) = HumanPlayer(Player(team, configs), io)
 HumanPlayer(team::Symbol, configs::Dict) = HumanPlayer(team, stdin, configs)
 
@@ -159,8 +145,8 @@ end
 function get_known_players()
     return known_players.registered_constructors
 end
-function add_player_to_register(name, constructor)
+function add_player_to_register(name, tc_constructor, p_constructor)
     @debug "Registering $name"
-    known_players.registered_constructors[name] = constructor
+    known_players.registered_constructors[name] = [tc_constructor, p_constructor]
 end
 
