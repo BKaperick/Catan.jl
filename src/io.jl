@@ -12,13 +12,13 @@ function create_players(configs::Dict)::Vector{PlayerType}
 end
 
 """
-    create_players(configs::Dict, players::AbstractVector{Player})::Vector{PlayerType}
+    create_players(players::AbstractVector{Player})::Vector{PlayerType}
 
 Creates the vector of players that can be passed to `Game` constructor.
 Here, we pass in the players so we don't need to reconstruct them.
 """
-function create_players(configs::Dict, players::AbstractVector{Player})::Vector{PlayerType}
-    @debug "starting to read lines"
+function create_players(players::AbstractVector{Player})::Vector{PlayerType}
+    configs = players[1].configs
     player_types = []
     for (name,p) in zip(configs["TEAMS"], players)
         player_type = get_player_config(configs, "TYPE", Symbol(name))
@@ -31,6 +31,13 @@ function create_players(configs::Dict, players::AbstractVector{Player})::Vector{
     end
     return player_types
 end
+
+function refresh_players!(player_types::AbstractVector{PlayerType})
+    for p in player_types
+        Catan.PlayerApi.reset_player!(p.player)
+    end
+end
+
 function initialize_players(configs::Dict)::Vector{Player}
     return [Player(Symbol(name), configs) for name in configs["TEAMS"]]
 end
