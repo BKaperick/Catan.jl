@@ -8,7 +8,7 @@ end
 Creates the vector of `PlayerType` players that can be passed to `Game` constructor.
 """
 function create_players(configs::Dict)::Vector{PlayerType}
-    return create_players(configs, initialize_players(configs))
+    return create_players(initialize_players(configs))
 end
 
 """
