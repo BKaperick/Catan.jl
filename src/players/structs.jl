@@ -17,14 +17,7 @@ mutable struct Player
 end
 
 function Player(team::Symbol, configs::Dict)
-    default_ports = Dict([
-    :Wood => 4
-    :Stone => 4
-    :Grain => 4
-    :Brick => 4
-    :Pasture => 4
-    ])
-    return Player(team, configs, Dict([(r,Int8(0)) for r in RESOURCES]))
+    return Player(team, configs, Dict{Symbol,Int8}())
 end
 function Player(team::Symbol, configs::Dict, resources::Dict{Symbol, Int8})
     default_ports = Dict([
@@ -34,7 +27,7 @@ function Player(team::Symbol, configs::Dict, resources::Dict{Symbol, Int8})
     :Brick => 4
     :Pasture => 4
     ])
-    return Player(resources, Dict(), team, Dict(), default_ports, false, nothing, configs)
+    return Player(resources, Dict(), team, Dict(), Dict{Symbol,Int8}(), false, nothing, configs)
 end
 
 

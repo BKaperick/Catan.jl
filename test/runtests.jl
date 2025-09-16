@@ -500,13 +500,12 @@ end
     player1 = DefaultRobotPlayer(:Test1, configs)
     player2 = DefaultRobotPlayer(:Test2, configs)
     game = Game(Vector{PlayerType}([player1, player2]), configs)
-    @test all([v == 4 for v in values(player1.player.ports)])
-    @test length(keys(player1.player.ports)) == 5
+    @test length(keys(player1.player.ports)) == 0
 
     PlayerApi.add_port!(player1.player, :Grain)
 
     @test player1.player.ports[:Grain] == 2
-    @test player1.player.ports[:Wood] == 4
+    @test get(player1.player.ports, :Wood, 4) == 4
     
     PlayerApi.add_port!(player1.player, :All)
     PlayerApi.add_port!(player2.player, :All)
