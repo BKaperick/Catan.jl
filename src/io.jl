@@ -5,23 +5,34 @@ end
 """
     create_players(configs::Dict)::Vector{PlayerType}
 
-Creates the vector of players that can be passed to `Game` constructor.
+Creates the vector of `PlayerType` players that can be passed to `Game` constructor.
 """
 function create_players(configs::Dict)::Vector{PlayerType}
+    return create_players(configs, initialize_players(configs))
+end
+
+"""
+    create_players(configs::Dict, players::AbstractVector{Player})::Vector{PlayerType}
+
+Creates the vector of players that can be passed to `Game` constructor.
+Here, we pass in the players so we don't need to reconstruct them.
+"""
+function create_players(configs::Dict, players::AbstractVector{Player})::Vector{PlayerType}
     @debug "starting to read lines"
-    players = []
-    for name in configs["TEAMS"]
-        config = configs["PlayerSettings"][name]
-        if ~(config isa Dict)
+    player_types = []
+    for (name,p) in zip(configs["TEAMS"], players)
+        player_type = get_player_config(configs, "TYPE", Symbol(name))
+        if ~(configs isa Dict)
             continue
         end
-        playertype = config["TYPE"]
-        name_sym = Symbol(name)
         @debug "Added player $name_sym of type $playertype"
-        player = get_known_players()[playertype](name_sym, configs)
-        push!(players, player)
+        player = get_known_players()[player_type][2](p)
+        push!(player_types, player)
     end
-    return players
+    return player_types
+end
+function initialize_players(configs::Dict)::Vector{Player}
+    return [Player(Symbol(name), configs) for name in configs["TEAMS"]]
 end
 
 function read_channels_from_config(configs::Dict)::Dict{Symbol, Channel}

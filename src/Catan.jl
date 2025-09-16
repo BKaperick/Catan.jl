@@ -70,8 +70,10 @@ function __init__()
     global DEFAULT_CONFIGS = _initialize_configs()
 
     global known_players = KnownPlayers(Dict())
-    add_player_to_register("DefaultRobotPlayer", (t,c) -> DefaultRobotPlayer(t,c))
-    add_player_to_register("HumanPlayer", (t,c) -> HumanPlayer(t,c))
+    add_player_to_register("DefaultRobotPlayer", (t,c) -> DefaultRobotPlayer(t,c),
+    p -> DefaultRobotPlayer(p::Player))
+    add_player_to_register("HumanPlayer", (t,c) -> HumanPlayer(t,c), 
+    p -> HumanPlayer(p))
 end
 
 end

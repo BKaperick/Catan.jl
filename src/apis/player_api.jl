@@ -248,10 +248,11 @@ end
 
 function reset_player!(player::Player)
     empty!(player.resources)
-    for r in RESOURCES
-        player.ports[r] = 4
-        player.resources[r] = 0
-    end
+    empty!(player.ports)
+    empty!(player.devcards)
+    empty!(player.devcards_used)
+    player.played_devcard_this_turn = false
+    player.bought_devcard_this_turn = nothing
 end
 
 end
