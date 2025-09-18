@@ -120,6 +120,11 @@ function count_resources(player::Player)
     end
     return total
 end
+
+function has_any_resources(player::Player)
+    return any([v > 0 for v in values(player.resources)])
+end
+
 function count_resource(player::Player, resource::Symbol)::Int
     if haskey(player.resources, resource)
         return player.resources[resource]

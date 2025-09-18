@@ -116,12 +116,20 @@ function do_road_building_action(board, players::AbstractVector{PlayerPublicView
 end
 
 function do_year_of_plenty_action(board, players::AbstractVector{PlayerPublicView}, player::PlayerType)
-    r1 = choose_resource_to_draw(board, players, player)::Symbol
-    PlayerApi.give_resource!(player.player, r1)
-    BoardApi.draw_resource!(board, r1)
-    r2 = choose_resource_to_draw(board, players, player)::Symbol
-    PlayerApi.give_resource!(player.player, r2)
-    BoardApi.draw_resource!(board, r2)
+    if BoardApi.has_any_resources(board)
+        r1 = choose_resource_to_draw(board, players, player)::Symbol
+        PlayerApi.give_resource!(player.player, r1)
+        BoardApi.draw_resource!(board, r1)
+    else
+        @info "Board does not have enough resources to perform Year of Plenty action"
+    end
+    if BoardApi.has_any_resources(board)
+        r2 = choose_resource_to_draw(board, players, player)::Symbol
+        PlayerApi.give_resource!(player.player, r2)
+        BoardApi.draw_resource!(board, r2)
+    else
+        @info "Board does not have enough resources to perform Year of Plenty second action"
+    end
 end
 
 function do_monopoly_action(board, players::AbstractVector{PlayerType}, player::PlayerType)
