@@ -16,7 +16,7 @@ function Game(players::AbstractVector{PlayerType}, configs::Dict)
     # TODO, fails with ERROR: Tuple field type cannot be Union{} in broadcast, so we have to do it as list comp.
     # Seems weird, maybe was working before 1.10
     # TODO test now that deepcopy changed to copy
-    static_copied_players = SVector{length(players)}([copy(p) for p in players])
+    static_copied_players = SVector{length(players)}([p for p in players])
     #bad_static_copied_players = SVector{length(players)}(copy.(players))
     Game(get_devcard_counts(configs), static_copied_players, Set(), 1, false, false, false, rand(range(1,10000)), configs)
 end
