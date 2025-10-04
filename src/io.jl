@@ -3,23 +3,23 @@ function get_parsed_map_lines(map_str)
 end
 
 """
-    create_players(configs::Dict)::Vector{PlayerType}
+    create_players(configs::Dict)::AbstractVector{PlayerType}
 
 Creates the vector of `PlayerType` players that can be passed to `Game` constructor.
 """
-function create_players(configs::Dict)::Vector{PlayerType}
+function create_players(configs::Dict)::AbstractVector{PlayerType}
     return create_players(initialize_players(configs))
 end
 
 """
-    create_players(players::AbstractVector{Player})::Vector{PlayerType}
+    create_players(players::AbstractVector{Player})::AbstractVector{PlayerType}
 
 Creates the vector of players that can be passed to `Game` constructor.
 Here, we pass in the players so we don't need to reconstruct them.
 """
-function create_players(players::AbstractVector{Player})::Vector{PlayerType}
+function create_players(players::AbstractVector{Player})::AbstractVector{PlayerType}
     configs = players[1].configs
-    player_types = []
+    player_types = Vector{PlayerType}([])
     for (name,p) in zip(configs["TEAMS"], players)
         player_type = get_player_config(configs, "TYPE", Symbol(name))
         if ~(configs isa Dict)
@@ -29,7 +29,7 @@ function create_players(players::AbstractVector{Player})::Vector{PlayerType}
         player = get_known_players()[player_type][2](p)
         push!(player_types, player)
     end
-    return player_types
+    return SVector{length(configs["TEAMS"]), PlayerType}(player_types)
 end
 
 function refresh_players!(player_types::AbstractVector{PlayerType})

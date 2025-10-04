@@ -13,10 +13,6 @@ end
 
 Game(players::AbstractVector{PlayerType}) = Game(SVector{length(players)}(players), Dict{String, Any}())
 function Game(players::AbstractVector{PlayerType}, configs::Dict)
-    static_players = SVector{length(players)}(players)
-    Game(get_devcard_counts(configs), static_players, Set(), 1, false, false, false, rand(range(1,10000)), configs)
-end
-function Game(players::SVector{PlayerType}, configs::Dict)
     Game(get_devcard_counts(configs), players, Set(), 1, false, false, false, rand(range(1,10000)), configs)
 end
 
