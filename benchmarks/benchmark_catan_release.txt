@@ -34,7 +34,7 @@ BenchmarkTools.Trial: 3498 samples with 1 evaluation per sample.
 
  Memory estimate: 1.37 MiB, allocs estimate: 36878.
 
-v.1.0.0
+v.1.1.0
 BenchmarkTools.Trial: 3373 samples with 1 evaluation per sample.
  Range (min … max):   1.973 ms … 82.011 ms  ┊ GC (min … max): 0.00% … 19.48%
  Time  (median):     13.558 ms              ┊ GC (median):    0.00%
@@ -46,7 +46,7 @@ BenchmarkTools.Trial: 3373 samples with 1 evaluation per sample.
 
  Memory estimate: 1.68 MiB, allocs estimate: 43964.
 
-v.1.0.0
+v.1.2.0
 BenchmarkTools.Trial: 3330 samples with 1 evaluation per sample.
  Range (min … max):   1.523 ms … 70.943 ms  ┊ GC (min … max): 0.00% …  0.00%
  Time  (median):     13.716 ms              ┊ GC (median):    0.00%
@@ -58,7 +58,7 @@ BenchmarkTools.Trial: 3330 samples with 1 evaluation per sample.
 
  Memory estimate: 1.12 MiB, allocs estimate: 30602.
 
-v.1.0.0
+v.2.0.0
 BenchmarkTools.Trial: 1700 samples with 1 evaluation per sample.
  Range (min … max):   2.522 ms … 66.592 ms  ┊ GC (min … max): 0.00% …  0.00%
  Time  (median):     41.459 ms              ┊ GC (median):    0.00%
