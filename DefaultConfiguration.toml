@@ -30,4 +30,4 @@ RESOURCE = 25
 [PlayerSettings]
 USING_REAL_BOARD = false
 # Reset the `Player` struct after the game so they can be re-used.
-RESET_AFTER_GAME = true
+RESET_AFTER_GAME = false

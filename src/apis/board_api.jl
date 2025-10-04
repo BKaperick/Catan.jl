@@ -519,6 +519,11 @@ end
 function can_draw_resource(board::Board, resource::Symbol)
     return board.resources[resource] > 0
 end
+
+function has_any_resources(board::Board)
+    return any([v > 0 for v in values(board.resources)])
+end
+
 function draw_resource!(board::Board, resource::Symbol)
     log_action(board.configs, :Board, "dr", resource)
     _draw_resource!(board, resource)

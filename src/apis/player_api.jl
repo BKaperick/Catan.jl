@@ -38,6 +38,15 @@ using ..Catan: Player, PlayerPublicView, RESOURCES, COSTS, RESOURCE_TO_COUNT, lo
 
 # Player API
 
+function is_in_initial_state(player::Player)::Bool
+    return !has_any_resources(player) && 
+    !has_any_devcards(player) &&
+    !has_any_devcards_used(player) &&
+    !has_any_ports(player) &&
+    !player.played_devcard_this_turn &&
+    isnothing(player.bought_devcard_this_turn)
+end
+
 function get_admissible_devcards(player::Player)::Vector{Tuple{Symbol}}
     return [(k,) for k in keys(get_admissible_devcards_with_counts(player))]
 end
@@ -120,6 +129,7 @@ function count_resources(player::Player)
     end
     return total
 end
+
 function count_resource(player::Player, resource::Symbol)::Int
     if haskey(player.resources, resource)
         return player.resources[resource]
@@ -127,8 +137,13 @@ function count_resource(player::Player, resource::Symbol)::Int
     return 0
 end
 
-function has_any_resources(player::Player)::Bool
-    for (r,amt) in player.resources
+has_any_resources(player::Player) = _has_any(player.resources)
+has_any_devcards(player::Player) = _has_any(player.devcards)
+has_any_devcards_used(player::Player) = _has_any(player.devcards_used)
+has_any_ports(player::Player) = _has_any(player.ports)
+
+function _has_any(d::Dict{Symbol, Int8})::Bool
+    for amt in values(d)
         if amt > 0
             return true
         end
